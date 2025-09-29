@@ -1,4 +1,4 @@
-# Research Timer Pro 🎯
+# Research Timer AI 🎯
 
 A sophisticated Pomodoro timer designed specifically for researchers, academics, and deep work enthusiasts. Features beautiful light and dark modes, analytics, music integration, and comprehensive session tracking.
 
