@@ -1,6 +1,11 @@
 import type { AiAdapter, GenerateOptions, GenerateResult, ConnectionTestResult } from '../adapter';
 import { retryWithBackoff, cleanError } from '../adapter';
 
+interface OllamaModel {
+  name: string;
+  [key: string]: unknown;
+}
+
 export class OllamaAdapter implements AiAdapter {
   name = 'ollama' as const;
 
@@ -25,14 +30,14 @@ export class OllamaAdapter implements AiAdapter {
 
       // Check if the specified model exists
       if (opts.model) {
-        const modelExists = models.some((m: any) =>
-          m.name === opts.model || m.name.startsWith(opts.model.split(':')[0])
+        const modelExists = (models as OllamaModel[]).some((m) =>
+          m.name === opts.model || m.name.startsWith(opts.model!.split(':')[0])
         );
 
         if (!modelExists) {
           return {
             ok: false,
-            message: `Model "${opts.model}" not found. Available models: ${models.map((m: any) => m.name).join(', ')}`
+            message: `Model "${opts.model}" not found. Available models: ${(models as OllamaModel[]).map((m) => m.name).join(', ')}`
           };
         }
       }

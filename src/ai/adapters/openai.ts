@@ -1,6 +1,11 @@
 import type { AiAdapter, GenerateOptions, GenerateResult, ConnectionTestResult } from '../adapter';
 import { retryWithBackoff, cleanError } from '../adapter';
 
+interface OpenAIModel {
+  id: string;
+  [key: string]: unknown;
+}
+
 export class OpenAiAdapter implements AiAdapter {
   name = 'openai' as const;
 
@@ -40,7 +45,7 @@ export class OpenAiAdapter implements AiAdapter {
 
       // Check if the specified model exists
       if (opts.model) {
-        const modelExists = models.some((m: any) => m.id === opts.model);
+        const modelExists = (models as OpenAIModel[]).some((m) => m.id === opts.model);
         if (!modelExists) {
           return {
             ok: false,

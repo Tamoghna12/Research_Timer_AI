@@ -1,6 +1,11 @@
 import type { AiAdapter, GenerateOptions, GenerateResult, ConnectionTestResult } from '../adapter';
 import { retryWithBackoff, cleanError } from '../adapter';
 
+interface GroqModel {
+  id: string;
+  [key: string]: unknown;
+}
+
 export class GroqAdapter implements AiAdapter {
   name = 'groq' as const;
 
@@ -40,7 +45,7 @@ export class GroqAdapter implements AiAdapter {
 
       // Check if the specified model exists
       if (opts.model) {
-        const modelExists = models.some((m: any) => m.id === opts.model);
+        const modelExists = (models as GroqModel[]).some((m) => m.id === opts.model);
         if (!modelExists) {
           return {
             ok: false,

@@ -7,7 +7,7 @@ import { LinkChipList } from '../components/ui/LinkChipList'
 import { useSessions } from '../hooks/useSessions'
 import { useJournal } from '../hooks/useJournal'
 import { TIMER_PRESETS } from '../data/types'
-import type { SessionMode, SessionJournal, AiSummaryMeta } from '../data/types'
+import type { SessionMode, SessionJournal, AiSummaryMeta, Session, LinkRef } from '../data/types'
 import { formatDuration, millisecondsToMinutes } from '../utils/time'
 
 const Timeline: React.FC = () => {
@@ -98,7 +98,7 @@ const Timeline: React.FC = () => {
     setSelectedSessionId(null)
   }
 
-  const generateMarkdownExport = (sessions: any[]) => {
+  const generateMarkdownExport = (sessions: Session[]) => {
     const header = `# Research Sessions Export\n\nExported: ${new Date().toLocaleString()}\nTotal Sessions: ${sessions.length}\n\n`
 
     const sessionMarkdown = sessions.map(session => {
@@ -146,7 +146,7 @@ ${session.notes || 'No notes'}
 
 **Tags:** ${(session.tags || []).length > 0 ? (session.tags || []).join(', ') : 'None'}
 
-**Links:** ${session.links && session.links.length > 0 ? session.links.map((link: any) => `${link.title || link.url}${link.description ? ' (' + link.description + ')' : ''}`).join(', ') : (session.link || 'None')}${journalSection}
+**Links:** ${session.links && session.links.length > 0 ? session.links.map((link: LinkRef) => `${link.title || link.url}${link.description ? ' (' + link.description + ')' : ''}`).join(', ') : (session.link || 'None')}${journalSection}
 
 ---
 
@@ -156,7 +156,7 @@ ${session.notes || 'No notes'}
     return header + sessionMarkdown
   }
 
-  const generateCSVExport = (sessions: any[]) => {
+  const generateCSVExport = (sessions: Session[]) => {
     const headers = ['Date', 'Time', 'Mode', 'Duration (min)', 'Status', 'Goal', 'Notes', 'Tags', 'Links', 'Journal']
     const rows = sessions.map(session => {
       const preset = TIMER_PRESETS.find(p => p.id === session.mode)
@@ -192,7 +192,7 @@ ${session.notes || 'No notes'}
         `"${(session.goal || '').replace(/"/g, '""')}"`,
         `"${(session.notes || '').replace(/"/g, '""')}"`,
         `"${(session.tags || []).join(', ')}"`,
-        session.links && session.links.length > 0 ? `"${session.links.map((link: any) => link.title || link.url).join(', ')}"` : `"${session.link || ''}"`,
+        session.links && session.links.length > 0 ? `"${session.links.map((link: LinkRef) => link.title || link.url).join(', ')}"` : `"${session.link || ''}"`,
         `"${journalData.replace(/"/g, '""')}"`
       ]
     })

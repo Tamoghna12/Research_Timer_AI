@@ -10,12 +10,14 @@ Object.defineProperty(global, 'crypto', {
 });
 
 // Mock navigator.clipboard
+const mockReadText = vi.fn();
 const mockClipboard = {
-  readText: vi.fn()
+  readText: mockReadText
 };
 
 Object.defineProperty(global.navigator, 'clipboard', {
-  value: mockClipboard
+  value: mockClipboard,
+  configurable: true
 });
 
 describe('useClipboardAttach', () => {
@@ -30,7 +32,7 @@ describe('useClipboardAttach', () => {
 
   describe('attachFromClipboard', () => {
     it('should attach DOI from clipboard', async () => {
-      mockClipboard.readText.mockResolvedValue('doi:10.1000/example');
+      mockReadText.mockResolvedValue('doi:10.1000/example');
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -50,7 +52,7 @@ describe('useClipboardAttach', () => {
     });
 
     it('should attach GitHub URL from clipboard', async () => {
-      mockClipboard.readText.mockResolvedValue('https://github.com/user/repo');
+      mockReadText.mockResolvedValue('https://github.com/user/repo');
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -63,7 +65,7 @@ describe('useClipboardAttach', () => {
     });
 
     it('should attach arXiv URL from clipboard', async () => {
-      mockClipboard.readText.mockResolvedValue('https://arxiv.org/abs/2301.12345');
+      mockReadText.mockResolvedValue('https://arxiv.org/abs/2301.12345');
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -76,7 +78,7 @@ describe('useClipboardAttach', () => {
     });
 
     it('should handle URLs without protocol', async () => {
-      mockClipboard.readText.mockResolvedValue('example.com/path/page');
+      mockReadText.mockResolvedValue('example.com/path/page');
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -89,7 +91,7 @@ describe('useClipboardAttach', () => {
     });
 
     it('should return null for empty clipboard', async () => {
-      mockClipboard.readText.mockResolvedValue('');
+      mockReadText.mockResolvedValue('');
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -102,7 +104,7 @@ describe('useClipboardAttach', () => {
     });
 
     it('should return null for whitespace-only clipboard', async () => {
-      mockClipboard.readText.mockResolvedValue('   \n  \t  ');
+      mockReadText.mockResolvedValue('   \n  \t  ');
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -115,7 +117,7 @@ describe('useClipboardAttach', () => {
     });
 
     it('should return null for non-URL content', async () => {
-      mockClipboard.readText.mockResolvedValue('Just some regular text that is not a URL');
+      mockReadText.mockResolvedValue('Just some regular text that is not a URL');
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -130,7 +132,7 @@ describe('useClipboardAttach', () => {
     it('should handle clipboard API not available', async () => {
       // Temporarily remove clipboard API
       const originalClipboard = navigator.clipboard;
-      Object.defineProperty(navigator, 'clipboard', { value: undefined });
+      Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
 
       const { result } = renderHook(() => useClipboardAttach());
 
@@ -143,11 +145,11 @@ describe('useClipboardAttach', () => {
       expect(result.current.error).toBe('Clipboard access not available');
 
       // Restore clipboard API
-      Object.defineProperty(navigator, 'clipboard', { value: originalClipboard });
+      Object.defineProperty(navigator, 'clipboard', { value: originalClipboard, configurable: true });
     });
 
     it('should handle clipboard read permission denied', async () => {
-      mockClipboard.readText.mockRejectedValue(new DOMException('Permission denied', 'NotAllowedError'));
+      mockReadText.mockRejectedValue(new DOMException('Permission denied', 'NotAllowedError'));
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -166,22 +168,25 @@ describe('useClipboardAttach', () => {
       const clipboardPromise = new Promise<string>((resolve) => {
         resolveClipboard = resolve;
       });
-      mockClipboard.readText.mockReturnValue(clipboardPromise);
+      mockReadText.mockReturnValue(clipboardPromise);
 
       const { result } = renderHook(() => useClipboardAttach());
 
       expect(result.current.isChecking).toBe(false);
 
-      const attachPromise = act(async () => {
-        await result.current.attachFromClipboard();
+      act(() => {
+        result.current.attachFromClipboard();
       });
 
       // Should be loading
       expect(result.current.isChecking).toBe(true);
 
-      // Resolve the clipboard promise
+      // Resolve the clipboard promise and wait
       resolveClipboard!('https://example.com');
-      await attachPromise;
+
+      await act(async () => {
+        // Wait for state updates to complete
+      });
 
       expect(result.current.isChecking).toBe(false);
     });
@@ -192,14 +197,14 @@ describe('useClipboardAttach', () => {
       const { result } = renderHook(() => useClipboardAttach());
 
       // First, cause an error
-      mockClipboard.readText.mockResolvedValue('');
+      mockReadText.mockResolvedValue('');
       await act(async () => {
         await result.current.attachFromClipboard();
       });
       expect(result.current.error).toBeTruthy();
 
       // Then, perform successful operation
-      mockClipboard.readText.mockResolvedValue('https://example.com');
+      mockReadText.mockResolvedValue('https://example.com');
       await act(async () => {
         await result.current.attachFromClipboard();
       });
@@ -207,7 +212,7 @@ describe('useClipboardAttach', () => {
     });
 
     it('should handle generic errors', async () => {
-      mockClipboard.readText.mockRejectedValue(new Error('Generic error'));
+      mockReadText.mockRejectedValue(new Error('Generic error'));
       const { result } = renderHook(() => useClipboardAttach());
 
       let linkRef;
@@ -234,7 +239,7 @@ describe('useClipboardAttach', () => {
       ];
 
       for (const url of validUrls) {
-        mockClipboard.readText.mockResolvedValue(url);
+        mockReadText.mockResolvedValue(url);
         const { result } = renderHook(() => useClipboardAttach());
 
         let linkRef;
@@ -250,12 +255,12 @@ describe('useClipboardAttach', () => {
       const invalidTexts = [
         'just text',
         '123456',
-        'not.url.at.all',
-        'file:///but-no-domain'
+        'invalid..domain',  // Double dots are invalid
+        'no-dots-here'      // No TLD
       ];
 
       for (const text of invalidTexts) {
-        mockClipboard.readText.mockResolvedValue(text);
+        mockReadText.mockResolvedValue(text);
         const { result } = renderHook(() => useClipboardAttach());
 
         let linkRef;

@@ -82,8 +82,8 @@ export async function retryWithBackoff<T>(
 /**
  * Clean error messages for user display
  */
-export function cleanError(error: any): string {
-  if (error?.name === 'AbortError' || String(error).includes('cancelled')) {
+export function cleanError(error: unknown): string {
+  if (typeof error === 'object' && error !== null && 'name' in error && error.name === 'AbortError' || String(error).includes('cancelled')) {
     return 'Request was cancelled';
   }
 
@@ -108,6 +108,8 @@ export function cleanError(error: any): string {
   }
 
   // Return clean message for other errors
-  const message = error?.message || String(error);
+  const message = (typeof error === 'object' && error !== null && 'message' in error && typeof error.message === 'string')
+    ? error.message
+    : String(error);
   return message.length > 100 ? message.substring(0, 97) + '...' : message;
 }

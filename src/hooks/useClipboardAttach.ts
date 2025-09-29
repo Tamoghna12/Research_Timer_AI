@@ -65,9 +65,33 @@ export function useClipboardAttach(): UseClipboardAttachResult {
 
 // Helper function to check if text looks like a URL
 function isValidUrl(text: string): boolean {
+  // Reject strings that are just numbers or have invalid patterns
+  if (/^\d+$/.test(text) || text.includes('..')) {
+    return false;
+  }
+
   try {
-    new URL(text.startsWith('http') ? text : `https://${text}`);
-    return true;
+    const urlToTest = text.startsWith('http') ? text : `https://${text}`;
+    const url = new URL(urlToTest);
+
+    // Must have a valid hostname with at least one dot (domain)
+    // or be localhost/IP address
+    const hostname = url.hostname;
+    const isValidIP = /^(\d{1,3}\.){3}\d{1,3}$/.test(hostname) && hostname.split('.').every(num => parseInt(num) <= 255);
+
+    if (hostname === 'localhost' || isValidIP) {
+      return true;
+    }
+
+    // For domain names, check for a valid TLD pattern
+    if (hostname.includes('.')) {
+      const parts = hostname.split('.');
+      const tld = parts[parts.length - 1];
+      // TLD should be at least 2 characters and contain only letters
+      return tld.length >= 2 && /^[a-zA-Z]+$/.test(tld);
+    }
+
+    return false;
   } catch {
     // Check for domain-like patterns without protocol
     const domainPattern = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.([a-zA-Z]{2,})/;

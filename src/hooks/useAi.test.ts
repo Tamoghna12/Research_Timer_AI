@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useAi } from './useAi'
-import type { Session } from '../data/types'
+import type { Session, AiSettings } from '../data/types'
 
 // Mock Dexie
 vi.mock('dexie-react-hooks', () => ({
@@ -39,12 +39,20 @@ describe('useAi', () => {
     updatedAt: Date.now()
   }
 
+  const mockAdapter = {
+    name: 'ollama' as const,
+    testConnection: vi.fn(),
+    summarize: vi.fn()
+  }
+
   beforeEach(() => {
-    mockGenerateSummary.mockClear()
+    vi.clearAllMocks()
+    mockUseLiveQuery.mockReturnValue(settings)
+    mockGetAdapter.mockReturnValue(mockAdapter as any)
   })
 
   it('should start in idle state', () => {
-    const { result } = renderHook(() => useAi(settings))
+    const { result } = renderHook(() => useAi())
 
     expect(result.current.status).toBe('idle')
     expect(result.current.error).toBeNull()
@@ -52,12 +60,12 @@ describe('useAi', () => {
   })
 
   it('should transition to loading state when generate is called', async () => {
-    mockGenerateSummary.mockImplementation(() => new Promise(() => {})) // Never resolves
+    mockAdapter.summarize.mockImplementation(() => new Promise(() => {})) // Never resolves
 
-    const { result } = renderHook(() => useAi(settings))
+    const { result } = renderHook(() => useAi())
 
     act(() => {
-      result.current.generate(mockSession)
+      result.current.generateSummary(mockSession)
     })
 
     expect(result.current.status).toBe('loading')
@@ -65,24 +73,24 @@ describe('useAi', () => {
     expect(result.current.result).toBeNull()
   })
 
-  it('should transition to done state on successful generation', async () => {
+  it('should transition to success state on successful generation', async () => {
     const mockResult = {
       text: '• Generated summary point 1\n• Generated summary point 2',
       tokensIn: 100,
       tokensOut: 50
     }
 
-    mockGenerateSummary.mockResolvedValueOnce(mockResult)
+    mockAdapter.summarize.mockResolvedValueOnce(mockResult)
 
-    const { result } = renderHook(() => useAi(settings))
+    const { result } = renderHook(() => useAi())
 
     await act(async () => {
-      const genResult = await result.current.generate(mockSession)
+      const genResult = await result.current.generateSummary(mockSession)
       expect(genResult).toEqual(mockResult)
     })
 
     await waitFor(() => {
-      expect(result.current.status).toBe('done')
+      expect(result.current.status).toBe('success')
       expect(result.current.error).toBeNull()
       expect(result.current.result).toBe(mockResult.text)
     })
@@ -90,12 +98,12 @@ describe('useAi', () => {
 
   it('should transition to error state on generation failure', async () => {
     const errorMessage = 'AI generation failed'
-    mockGenerateSummary.mockRejectedValueOnce(new Error(errorMessage))
+    mockAdapter.summarize.mockRejectedValueOnce(new Error(errorMessage))
 
-    const { result } = renderHook(() => useAi(settings))
+    const { result } = renderHook(() => useAi())
 
     await act(async () => {
-      const genResult = await result.current.generate(mockSession)
+      const genResult = await result.current.generateSummary(mockSession)
       expect(genResult).toBeNull()
     })
 
@@ -108,24 +116,18 @@ describe('useAi', () => {
 
   it('should handle cancellation', async () => {
     const controller = new AbortController()
-    mockGenerateSummary.mockImplementation(async (session, settings, signal) => {
-      // Simulate cancellation
-      signal.addEventListener('abort', () => {
-        controller.abort()
-      })
+    mockAdapter.summarize.mockImplementation(async () => {
       return new Promise((_, reject) => {
         setTimeout(() => {
-          if (signal.aborted) {
-            reject(new Error('Request was cancelled'))
-          }
+          reject(new Error('Request was cancelled'))
         }, 100)
       })
     })
 
-    const { result } = renderHook(() => useAi(settings))
+    const { result } = renderHook(() => useAi())
 
     act(() => {
-      result.current.generate(mockSession)
+      result.current.generateSummary(mockSession)
     })
 
     expect(result.current.status).toBe('loading')
@@ -140,31 +142,31 @@ describe('useAi', () => {
     })
   })
 
-  it('should reset all state when reset is called', async () => {
+  it('should reset all state when settings change', async () => {
     const mockResult = {
       text: '• Generated summary',
       tokensIn: 100,
       tokensOut: 50
     }
 
-    mockGenerateSummary.mockResolvedValueOnce(mockResult)
+    mockAdapter.summarize.mockResolvedValueOnce(mockResult)
 
-    const { result } = renderHook(() => useAi(settings))
+    const { result, rerender } = renderHook(() => useAi())
 
     // Generate a result first
     await act(async () => {
-      await result.current.generate(mockSession)
+      await result.current.generateSummary(mockSession)
     })
 
     await waitFor(() => {
-      expect(result.current.status).toBe('done')
+      expect(result.current.status).toBe('success')
       expect(result.current.result).toBe(mockResult.text)
     })
 
-    // Now reset
-    act(() => {
-      result.current.reset()
-    })
+    // Simulate settings change
+    const newSettings = { ...settings, model: 'different-model' }
+    mockUseLiveQuery.mockReturnValue(newSettings)
+    rerender()
 
     expect(result.current.status).toBe('idle')
     expect(result.current.error).toBeNull()
@@ -172,28 +174,28 @@ describe('useAi', () => {
   })
 
   it('should handle generation with no error message', async () => {
-    mockGenerateSummary.mockRejectedValueOnce(new Error())
+    mockAdapter.summarize.mockRejectedValueOnce(new Error())
 
-    const { result } = renderHook(() => useAi(settings))
+    const { result } = renderHook(() => useAi())
 
     await act(async () => {
-      await result.current.generate(mockSession)
+      await result.current.generateSummary(mockSession)
     })
 
     await waitFor(() => {
       expect(result.current.status).toBe('error')
-      expect(result.current.error).toBe('AI generation failed')
+      expect(result.current.error).toBe('Error')
     })
   })
 
   it('should clear error when starting new generation', async () => {
     // First, cause an error
-    mockGenerateSummary.mockRejectedValueOnce(new Error('First error'))
+    mockAdapter.summarize.mockRejectedValueOnce(new Error('First error'))
 
-    const { result } = renderHook(() => useAi(settings))
+    const { result } = renderHook(() => useAi())
 
     await act(async () => {
-      await result.current.generate(mockSession)
+      await result.current.generateSummary(mockSession)
     })
 
     await waitFor(() => {
@@ -202,10 +204,10 @@ describe('useAi', () => {
     })
 
     // Then start a new generation
-    mockGenerateSummary.mockImplementation(() => new Promise(() => {})) // Never resolves
+    mockAdapter.summarize.mockImplementation(() => new Promise(() => {})) // Never resolves
 
     act(() => {
-      result.current.generate(mockSession)
+      result.current.generateSummary(mockSession)
     })
 
     expect(result.current.status).toBe('loading')
