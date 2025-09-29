@@ -34,7 +34,7 @@ jobs:
       - name: Run linting
         run: npm run lint || echo "Linting issues detected but continuing deployment"
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm run test:run
 
       - name: Build project

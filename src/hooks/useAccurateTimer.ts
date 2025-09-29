@@ -84,7 +84,7 @@ export function useAccurateTimer({
     setIsPaused(false);
 
     intervalRef.current = setInterval(updateTimer, interval);
-  }, [isCompleted, updateTimer, interval, currentDuration]);
+  }, [isCompleted, updateTimer, interval]);
 
   const pauseTimeRef = useRef<number | null>(null);
 
