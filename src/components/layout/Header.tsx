@@ -36,7 +36,7 @@ const Header: React.FC = () => {
 
     // Force a repaint
     document.body.style.display = 'none'
-    document.body.offsetHeight // trigger reflow
+    void document.body.offsetHeight // trigger reflow
     document.body.style.display = ''
   }
 

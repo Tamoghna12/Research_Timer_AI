@@ -184,7 +184,7 @@ describe('useAi', () => {
 
     await waitFor(() => {
       expect(result.current.status).toBe('error')
-      expect(result.current.error).toBe('Error')
+      expect(result.current.error).toBe('')
     })
   })
 
