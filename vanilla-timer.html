@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Timer Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Academic Research Timer - CSS Variables */
+        :root {
+            --accent: #1E40AF;
+            --accent-light: #3B82F6;
+            --accent-dark: #1E3A8A;
+
+            --background-light: #F9FAFB;
+            --background-dark: #111827;
+
+            --card-light: #FFFFFF;
+            --card-dark: #1F2937;
+
+            --border-light: #E5E7EB;
+            --border-dark: #374151;
+
+            --text-light: #1F2937;
+            --text-dark: #F3F4F6;
+            --text-muted-light: #6B7280;
+            --text-muted-dark: #9CA3AF;
+
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+            --radius: 0.5rem;
+            --radius-lg: 0.75rem;
+        }
+
+        /* Dark mode styles */
+        [data-theme="dark"] {
+            --background: var(--background-dark);
+            --card: var(--card-dark);
+            --border: var(--border-dark);
+            --text: var(--text-dark);
+            --text-muted: var(--text-muted-dark);
+        }
+
+        [data-theme="light"] {
+            --background: var(--background-light);
+            --card: var(--card-light);
+            --border: var(--border-light);
+            --text: var(--text-light);
+            --text-muted: var(--text-muted-light);
+        }
+
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Lora', serif;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 { font-size: 2.25rem; }
+        h2 { font-size: 1.875rem; }
+        h3 { font-size: 1.5rem; }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .header {
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        [data-theme="dark"] .header {
+            background: rgba(31, 41, 55, 0.95);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4rem;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            font-family: 'Lora', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent);
+            background: rgba(30, 64, 175, 0.1);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--card);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Main content */
+        .main {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            padding: 2rem 1rem;
+            min-height: calc(100vh - 4rem);
+        }
+
+        @media (min-width: 1024px) {
+            .main {
+                grid-template-columns: 2fr 1fr;
+                padding: 3rem 1rem;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+        }
+
+        [data-theme="dark"] .card-header {
+            border-bottom-color: rgba(55, 65, 81, 0.5);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        /* Timer section */
+        .timer-section {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            color: var(--accent);
+            margin: 2rem 0;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+
+        .timer-status {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
+        }
+
+        /* Focus mode selection */
+        .focus-modes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin: 2rem 0;
+        }
+
+        .focus-mode {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .focus-mode:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .focus-mode.selected {
+            border-color: var(--accent);
+            background: rgba(30, 64, 175, 0.1);
+            color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
+        }
+
+        .focus-mode-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .focus-mode-duration {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background: var(--background);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background: #059669;
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-success:hover {
+            background: #047857;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background: #DC2626;
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-danger:hover {
+            background: #B91C1C;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            min-width: 120px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        /* Form elements */
+        .form-field {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        /* Tags */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            min-height: 2.5rem;
+            align-items: center;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(30, 64, 175, 0.1);
+            color: var(--accent);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag-remove {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .tag-remove:hover {
+            background: rgba(30, 64, 175, 0.2);
+        }
+
+        .tag-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 0.25rem;
+            font-size: 0.875rem;
+            min-width: 100px;
+        }
+
+        .tag-input:focus {
+            outline: none;
+        }
+
+        /* Keyboard shortcuts */
+        .shortcuts {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(229, 231, 235, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        [data-theme="dark"] .shortcuts {
+            background: rgba(31, 41, 55, 0.6);
+            border-color: rgba(55, 65, 81, 0.3);
+        }
+
+        .kbd {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 0.25rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Responsive design */
+        .mobile-hidden {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-hidden {
+                display: block;
+            }
+
+            .desktop-hidden {
+                display: none;
+            }
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-subtitle {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Utility classes */
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mt-4 { margin-top: 1rem; }
+        .hidden { display: none; }
+        .block { display: block; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+    </style>
+</head>
+<body data-theme="light">
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">Research Timer Pro</a>
+
+                <nav class="nav mobile-hidden">
+                    <a href="#" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link">Timeline</a>
+                    <a href="#" class="nav-link">Analytics</a>
+                    <a href="#" class="nav-link">Report</a>
+                    <a href="#" class="nav-link">Settings</a>
+                </nav>
+
+                <button class="theme-toggle" id="themeToggle">
+                    <span class="material-icons">light_mode</span>
+                    <span class="mobile-hidden">Light</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="hero desktop-hidden">
+                <h1>Research Timer Pro</h1>
+                <p class="hero-subtitle">Focus on what matters most ✨</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+                <!-- Timer Section -->
+                <div>
+                    <div class="hero mobile-hidden">
+                        <h1>Research Timer Pro</h1>
+                        <p class="hero-subtitle">Focus on what matters most ✨</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="timer-section">
+                                <div class="timer-display" id="timerDisplay">25:00</div>
+                                <div class="timer-status" id="timerStatus">Ready</div>
+                            </div>
+                        </div>
+
+                        <div class="card-content">
+                            <!-- Focus Mode Selection -->
+                            <div id="focusModeSection">
+                                <h3 class="mb-4">Focus Mode <span style="font-size: 0.875rem; font-weight: normal; color: var(--text-muted);">(press 1-5)</span></h3>
+                                <div class="focus-modes" id="focusModes">
+                                    <div class="focus-mode selected" data-mode="lit" data-duration="25">
+                                        <div class="focus-mode-name">Lit Review</div>
+                                        <div class="focus-mode-duration">25 min</div>
+                                    </div>
+                                    <div class="focus-mode" data-mode="analysis" data-duration="45">
+                                        <div class="focus-mode-name">Analysis</div>
+                                        <div class="focus-mode-duration">45 min</div>
+                                    </div>
+                                    <div class="focus-mode" data-mode="writing" data-duration="30">
+                                        <div class="focus-mode-name">Writing</div>
+                                        <div class="focus-mode-duration">30 min</div>
+                                    </div>
+                                    <div class="focus-mode" data-mode="deep" data-duration="90">
+                                        <div class="focus-mode-name">Deep Work</div>
+                                        <div class="focus-mode-duration">90 min</div>
+                                    </div>
+                                    <div class="focus-mode" data-mode="break" data-duration="15">
+                                        <div class="focus-mode-name">Break</div>
+                                        <div class="focus-mode-duration">15 min</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-field">
+                                    <label class="form-label" for="customDuration">Custom Duration (minutes)</label>
+                                    <input type="number" id="customDuration" class="form-input" style="width: 150px;" min="1" max="300" placeholder="25">
+                                    <div class="form-hint">Leave empty to use preset duration</div>
+                                </div>
+                            </div>
+
+                            <!-- Timer Controls -->
+                            <div class="btn-group">
+                                <button class="btn btn-success btn-lg" id="startPauseBtn">
+                                    <span class="material-icons">play_arrow</span>
+                                    Start
+                                </button>
+                                <button class="btn btn-secondary btn-lg hidden" id="stopBtn">
+                                    <span class="material-icons">stop</span>
+                                    Stop
+                                </button>
+                                <button class="btn btn-secondary btn-lg" id="resetBtn">
+                                    <span class="material-icons">refresh</span>
+                                    Reset
+                                </button>
+                            </div>
+
+                            <!-- Keyboard Shortcuts -->
+                            <div class="shortcuts">
+                                <p class="mb-2">
+                                    Press <kbd class="kbd">Space</kbd> to start/pause
+                                </p>
+                                <p>
+                                    Press <kbd class="kbd">R</kbd> to reset
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Details -->
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Session Details</h2>
+                            <div id="detailsHint" class="form-hint">Details saved when you start</div>
+                        </div>
+
+                        <div class="card-content">
+                            <div class="form-field">
+                                <label class="form-label" for="sessionGoal">Goal</label>
+                                <input type="text" id="sessionGoal" class="form-input" placeholder="What are you working on?">
+                            </div>
+
+                            <div class="form-field">
+                                <label class="form-label" for="sessionNotes">Notes</label>
+                                <textarea id="sessionNotes" class="form-textarea" rows="4" placeholder="Any additional notes..."></textarea>
+                            </div>
+
+                            <div class="form-field">
+                                <label class="form-label" for="sessionTags">Tags</label>
+                                <div class="tags-container" id="tagsContainer">
+                                    <input type="text" id="tagInput" class="tag-input" placeholder="Add tag...">
+                                </div>
+                                <div class="form-hint">Press Enter or comma to add. Backspace to remove.</div>
+                            </div>
+
+                            <div class="form-field">
+                                <label class="form-label" for="sessionLink">Reference Link</label>
+                                <input type="text" id="sessionLink" class="form-input" placeholder="https://... or DOI:...">
+                                <div class="form-hint">DOI, URL, or other reference</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Research Timer Pro - Vanilla JavaScript Implementation
+        class ResearchTimer {
+            constructor() {
+                this.state = {
+                    isRunning: false,
+                    isPaused: false,
+                    remainingMs: 25 * 60 * 1000, // Default 25 minutes
+                    selectedMode: 'lit',
+                    selectedDuration: 25,
+                    startTime: null,
+                    pausedTime: 0,
+                    session: null,
+                    tags: []
+                };
+
+                this.presets = {
+                    lit: { name: 'Lit Review', duration: 25 },
+                    analysis: { name: 'Analysis', duration: 45 },
+                    writing: { name: 'Writing', duration: 30 },
+                    deep: { name: 'Deep Work', duration: 90 },
+                    break: { name: 'Break', duration: 15 }
+                };
+
+                this.interval = null;
+                this.initializeElements();
+                this.bindEvents();
+                this.loadTheme();
+                this.updateDisplay();
+            }
+
+            initializeElements() {
+                this.elements = {
+                    timerDisplay: document.getElementById('timerDisplay'),
+                    timerStatus: document.getElementById('timerStatus'),
+                    startPauseBtn: document.getElementById('startPauseBtn'),
+                    stopBtn: document.getElementById('stopBtn'),
+                    resetBtn: document.getElementById('resetBtn'),
+                    focusModes: document.getElementById('focusModes'),
+                    focusModeSection: document.getElementById('focusModeSection'),
+                    customDuration: document.getElementById('customDuration'),
+                    sessionGoal: document.getElementById('sessionGoal'),
+                    sessionNotes: document.getElementById('sessionNotes'),
+                    sessionLink: document.getElementById('sessionLink'),
+                    tagsContainer: document.getElementById('tagsContainer'),
+                    tagInput: document.getElementById('tagInput'),
+                    detailsHint: document.getElementById('detailsHint'),
+                    themeToggle: document.getElementById('themeToggle')
+                };
+            }
+
+            bindEvents() {
+                // Timer controls
+                this.elements.startPauseBtn.addEventListener('click', () => this.toggleTimer());
+                this.elements.stopBtn.addEventListener('click', () => this.stopTimer());
+                this.elements.resetBtn.addEventListener('click', () => this.resetTimer());
+
+                // Focus mode selection
+                this.elements.focusModes.addEventListener('click', (e) => {
+                    const modeEl = e.target.closest('.focus-mode');
+                    if (modeEl && !this.state.isRunning && !this.state.isPaused) {
+                        this.selectMode(modeEl);
+                    }
+                });
+
+                // Custom duration
+                this.elements.customDuration.addEventListener('input', (e) => {
+                    if (!this.state.isRunning && !this.state.isPaused) {
+                        const duration = parseInt(e.target.value) || this.state.selectedDuration;
+                        this.state.remainingMs = duration * 60 * 1000;
+                        this.updateDisplay();
+                    }
+                });
+
+                // Tag input
+                this.elements.tagInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        this.addTag();
+                    } else if (e.key === 'Backspace' && e.target.value === '' && this.state.tags.length > 0) {
+                        this.removeTag(this.state.tags.length - 1);
+                    }
+                });
+
+                this.elements.tagInput.addEventListener('blur', () => this.addTag());
+
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+                    switch (e.key) {
+                        case ' ':
+                            e.preventDefault();
+                            this.toggleTimer();
+                            break;
+                        case 'r':
+                        case 'R':
+                            e.preventDefault();
+                            this.resetTimer();
+                            break;
+                        case '1':
+                        case '2':
+                        case '3':
+                        case '4':
+                        case '5':
+                            e.preventDefault();
+                            const modes = ['lit', 'analysis', 'writing', 'deep', 'break'];
+                            const mode = modes[parseInt(e.key) - 1];
+                            if (mode && !this.state.isRunning && !this.state.isPaused) {
+                                const modeEl = document.querySelector(`[data-mode="${mode}"]`);
+                                if (modeEl) this.selectMode(modeEl);
+                            }
+                            break;
+                    }
+                });
+
+                // Theme toggle
+                this.elements.themeToggle.addEventListener('click', () => this.toggleTheme());
+
+                // Session data auto-save
+                ['sessionGoal', 'sessionNotes', 'sessionLink'].forEach(id => {
+                    this.elements[id].addEventListener('input', () => this.saveSessionData());
+                });
+            }
+
+            selectMode(modeEl) {
+                // Remove previous selection
+                document.querySelectorAll('.focus-mode').forEach(el => el.classList.remove('selected'));
+
+                // Select new mode
+                modeEl.classList.add('selected');
+                this.state.selectedMode = modeEl.dataset.mode;
+                this.state.selectedDuration = parseInt(modeEl.dataset.duration);
+                this.state.remainingMs = this.state.selectedDuration * 60 * 1000;
+                this.elements.customDuration.value = '';
+                this.updateDisplay();
+            }
+
+            toggleTimer() {
+                if (this.state.isRunning) {
+                    this.pauseTimer();
+                } else {
+                    this.startTimer();
+                }
+            }
+
+            startTimer() {
+                if (!this.state.session) {
+                    this.createSession();
+                }
+
+                this.state.isRunning = true;
+                this.state.isPaused = false;
+                this.state.startTime = Date.now() - this.state.pausedTime;
+
+                this.interval = setInterval(() => {
+                    const elapsed = Date.now() - this.state.startTime;
+                    const originalDuration = (this.elements.customDuration.value ?
+                        parseInt(this.elements.customDuration.value) :
+                        this.state.selectedDuration) * 60 * 1000;
+
+                    this.state.remainingMs = Math.max(0, originalDuration - elapsed);
+
+                    if (this.state.remainingMs <= 0) {
+                        this.completeTimer();
+                    }
+
+                    this.updateDisplay();
+                }, 100);
+
+                this.updateUI();
+                this.saveSessionData();
+            }
+
+            pauseTimer() {
+                this.state.isRunning = false;
+                this.state.isPaused = true;
+                this.state.pausedTime = Date.now() - this.state.startTime;
+
+                clearInterval(this.interval);
+                this.updateUI();
+            }
+
+            stopTimer() {
+                this.state.isRunning = false;
+                this.state.isPaused = false;
+                this.state.startTime = null;
+                this.state.pausedTime = 0;
+
+                clearInterval(this.interval);
+                this.completeSession();
+                this.updateUI();
+            }
+
+            resetTimer() {
+                this.state.isRunning = false;
+                this.state.isPaused = false;
+                this.state.startTime = null;
+                this.state.pausedTime = 0;
+                this.state.session = null;
+
+                const duration = this.elements.customDuration.value ?
+                    parseInt(this.elements.customDuration.value) :
+                    this.state.selectedDuration;
+                this.state.remainingMs = duration * 60 * 1000;
+
+                clearInterval(this.interval);
+                this.updateDisplay();
+                this.updateUI();
+            }
+
+            completeTimer() {
+                this.state.isRunning = false;
+                this.state.remainingMs = 0;
+
+                clearInterval(this.interval);
+                this.showNotification('Timer Complete!', `${this.presets[this.state.selectedMode].name} session finished!`);
+                this.completeSession();
+                this.updateDisplay();
+                this.updateUI();
+            }
+
+            createSession() {
+                this.state.session = {
+                    id: this.generateId(),
+                    mode: this.state.selectedMode,
+                    startedAt: Date.now(),
+                    plannedMs: (this.elements.customDuration.value ?
+                        parseInt(this.elements.customDuration.value) :
+                        this.state.selectedDuration) * 60 * 1000,
+                    goal: this.elements.sessionGoal.value,
+                    notes: this.elements.sessionNotes.value,
+                    link: this.elements.sessionLink.value,
+                    tags: [...this.state.tags]
+                };
+
+                this.elements.detailsHint.style.display = 'none';
+                this.elements.focusModeSection.style.display = 'none';
+            }
+
+            completeSession() {
+                if (this.state.session) {
+                    this.state.session.endedAt = Date.now();
+                    this.state.session.status = 'completed';
+                    this.saveToStorage();
+                }
+            }
+
+            updateDisplay() {
+                const minutes = Math.floor(this.state.remainingMs / 60000);
+                const seconds = Math.floor((this.state.remainingMs % 60000) / 1000);
+                this.elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                let status = 'Ready';
+                if (this.state.isRunning) {
+                    status = 'Running';
+                    this.elements.timerDisplay.classList.add('pulse');
+                } else if (this.state.isPaused) {
+                    status = 'Paused';
+                    this.elements.timerDisplay.classList.remove('pulse');
+                } else if (this.state.remainingMs === 0) {
+                    status = 'Completed';
+                    this.elements.timerDisplay.classList.remove('pulse');
+                } else if (this.state.session) {
+                    status = 'Ready to resume';
+                    this.elements.timerDisplay.classList.remove('pulse');
+                } else {
+                    this.elements.timerDisplay.classList.remove('pulse');
+                }
+
+                this.elements.timerStatus.textContent = status;
+            }
+
+            updateUI() {
+                // Update button states
+                if (this.state.isRunning) {
+                    this.elements.startPauseBtn.innerHTML = '<span class="material-icons">pause</span>Pause';
+                    this.elements.startPauseBtn.className = 'btn btn-danger btn-lg';
+                    this.elements.stopBtn.classList.remove('hidden');
+                } else if (this.state.isPaused) {
+                    this.elements.startPauseBtn.innerHTML = '<span class="material-icons">play_arrow</span>Resume';
+                    this.elements.startPauseBtn.className = 'btn btn-success btn-lg';
+                    this.elements.stopBtn.classList.remove('hidden');
+                } else {
+                    this.elements.startPauseBtn.innerHTML = '<span class="material-icons">play_arrow</span>Start';
+                    this.elements.startPauseBtn.className = 'btn btn-success btn-lg';
+                    this.elements.stopBtn.classList.add('hidden');
+                }
+
+                // Show/hide focus mode selection
+                if (!this.state.session) {
+                    this.elements.focusModeSection.style.display = 'block';
+                    this.elements.detailsHint.style.display = 'block';
+                }
+            }
+
+            addTag() {
+                const tagText = this.elements.tagInput.value.trim();
+                if (tagText && !this.state.tags.includes(tagText)) {
+                    this.state.tags.push(tagText);
+                    this.renderTags();
+                    this.elements.tagInput.value = '';
+                    this.saveSessionData();
+                }
+            }
+
+            removeTag(index) {
+                this.state.tags.splice(index, 1);
+                this.renderTags();
+                this.saveSessionData();
+            }
+
+            renderTags() {
+                // Remove existing tags
+                this.elements.tagsContainer.querySelectorAll('.tag').forEach(tag => tag.remove());
+
+                // Add tags before input
+                this.state.tags.forEach((tag, index) => {
+                    const tagEl = document.createElement('div');
+                    tagEl.className = 'tag';
+                    tagEl.innerHTML = `
+                        ${tag}
+                        <button class="tag-remove" onclick="timer.removeTag(${index})">
+                            <span class="material-icons" style="font-size: 12px;">close</span>
+                        </button>
+                    `;
+                    this.elements.tagsContainer.insertBefore(tagEl, this.elements.tagInput);
+                });
+            }
+
+            saveSessionData() {
+                if (this.state.session) {
+                    this.state.session.goal = this.elements.sessionGoal.value;
+                    this.state.session.notes = this.elements.sessionNotes.value;
+                    this.state.session.link = this.elements.sessionLink.value;
+                    this.state.session.tags = [...this.state.tags];
+                    this.saveToStorage();
+                }
+            }
+
+            saveToStorage() {
+                if (this.state.session) {
+                    const sessions = JSON.parse(localStorage.getItem('researchTimerSessions') || '[]');
+                    const existingIndex = sessions.findIndex(s => s.id === this.state.session.id);
+
+                    if (existingIndex >= 0) {
+                        sessions[existingIndex] = this.state.session;
+                    } else {
+                        sessions.push(this.state.session);
+                    }
+
+                    localStorage.setItem('researchTimerSessions', JSON.stringify(sessions));
+                }
+            }
+
+            showNotification(title, message) {
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    new Notification(title, {
+                        body: message,
+                        icon: '/favicon.ico'
+                    });
+                } else if ('Notification' in window && Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            new Notification(title, { body: message, icon: '/favicon.ico' });
+                        }
+                    });
+                }
+
+                // Fallback: show in-page notification
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: var(--accent);
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: var(--radius-lg);
+                    box-shadow: var(--shadow-lg);
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                `;
+                notification.innerHTML = `<strong>${title}</strong><br>${message}`;
+
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+
+            toggleTheme() {
+                const currentTheme = document.body.dataset.theme;
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+                document.body.dataset.theme = newTheme;
+                localStorage.setItem('researchTimerTheme', newTheme);
+
+                const icon = this.elements.themeToggle.querySelector('.material-icons');
+                const text = this.elements.themeToggle.querySelector('span:not(.material-icons)');
+
+                if (newTheme === 'dark') {
+                    icon.textContent = 'dark_mode';
+                    if (text) text.textContent = 'Dark';
+                } else {
+                    icon.textContent = 'light_mode';
+                    if (text) text.textContent = 'Light';
+                }
+            }
+
+            loadTheme() {
+                const savedTheme = localStorage.getItem('researchTimerTheme');
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+
+                document.body.dataset.theme = theme;
+
+                const icon = this.elements.themeToggle.querySelector('.material-icons');
+                const text = this.elements.themeToggle.querySelector('span:not(.material-icons)');
+
+                if (theme === 'dark') {
+                    icon.textContent = 'dark_mode';
+                    if (text) text.textContent = 'Dark';
+                } else {
+                    icon.textContent = 'light_mode';
+                    if (text) text.textContent = 'Light';
+                }
+            }
+
+            generateId() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            }
+        }
+
+        // Initialize the timer
+        const timer = new ResearchTimer();
+
+        // Add slide-in animation for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Request notification permission on load
+        if ('Notification' in window && Notification.permission === 'default') {
+            setTimeout(() => {
+                Notification.requestPermission();
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - heading "Research Timer Pro" [level=1] [ref=e8]
+        - navigation [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "Timeline" [ref=e11] [cursor=pointer]:
+            - /url: /timeline
+          - link "Analytics" [ref=e12] [cursor=pointer]:
+            - /url: /analytics
+          - link "Report" [ref=e13] [cursor=pointer]:
+            - /url: /report
+          - link "Settings" [ref=e14] [cursor=pointer]:
+            - /url: /settings
+      - button "Toggle theme" [ref=e15]:
+        - generic [ref=e16]: dark_mode
+        - text: Dark
+  - main [ref=e17]:
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - heading "Settings" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Customize your Research Timer Pro experience and manage your data
+      - generic [ref=e24]:
+        - heading "Profile" [level=2] [ref=e26]
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]: Researcher Name
+            - textbox "Researcher Name" [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]: Affiliation
+            - textbox "Affiliation" [ref=e34]
+      - generic [ref=e35]:
+        - heading "Privacy" [level=2] [ref=e37]
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - generic [ref=e41]:
+              - generic [ref=e42]: Anonymous Telemetry
+              - generic [ref=e43]: Help improve Research Timer Pro by sharing anonymous usage data.
+            - generic [ref=e45] [cursor=pointer]:
+              - switch "Off" [ref=e46]
+              - generic [ref=e48] [cursor=pointer]: "Off"
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - generic [ref=e51]: "When telemetry is ON:"
+              - list [ref=e52]:
+                - listitem [ref=e53]: Only anonymous counters are shared (session counts, mode usage)
+                - listitem [ref=e54]: No personal content is ever sent (notes, journals, links, AI summaries)
+                - listitem [ref=e55]: Only your anonymous ID is used to group events
+                - listitem [ref=e56]: Data helps improve the app experience for everyone
+            - generic [ref=e57]:
+              - generic [ref=e58]: "When telemetry is OFF:"
+              - list [ref=e59]:
+                - listitem [ref=e60]: The app makes zero network requests for analytics
+                - listitem [ref=e61]: No usage data is collected or shared
+                - listitem [ref=e62]: Everything stays completely private on your device
+            - generic [ref=e63]:
+              - generic [ref=e64]: "Your privacy is always protected:"
+              - list [ref=e65]:
+                - listitem [ref=e66]: AI API keys live only in your browser storage
+                - listitem [ref=e67]: All your data stays on your device (IndexedDB)
+                - listitem [ref=e68]: No accounts, logins, or cloud storage required
+      - generic [ref=e69]:
+        - heading "Data" [level=2] [ref=e71]
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - heading "Export Data" [level=3] [ref=e75]
+            - paragraph [ref=e76]: Download all your research sessions, settings, and AI summaries as a JSON backup file.
+            - button "download Export All Data" [ref=e77]:
+              - generic [ref=e78]: download
+              - text: Export All Data
+          - generic [ref=e79]:
+            - heading "Import Data" [level=3] [ref=e80]
+            - paragraph [ref=e81]: Restore data from a Research Timer Pro backup file. Existing data will be merged intelligently.
+            - generic [ref=e82]:
+              - generic [ref=e83]: Backup File
+              - button "Backup File" [ref=e84]
+          - generic [ref=e85]:
+            - heading "Danger Zone" [level=3] [ref=e86]
+            - paragraph [ref=e87]: Permanently delete all your sessions, settings, and data. This action cannot be undone. Consider exporting your data first.
+            - button "delete_forever Delete All Data" [ref=e88]:
+              - generic [ref=e89]: delete_forever
+              - text: Delete All Data
+            - generic [ref=e90]: This will permanently delete all your research data and cannot be undone
+      - generic [ref=e91]:
+        - heading "AI Features" [level=2] [ref=e93]
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - generic [ref=e98]: Enable AI Summarization (opt-in)
+            - generic [ref=e99]: Generate concise summaries of your research sessions using AI. All settings are stored locally.
+          - checkbox [ref=e102]
+  - contentinfo [ref=e104]:
+    - generic [ref=e107]:
+      - button "keyboard Keyboard Shortcuts" [ref=e108]:
+        - generic [ref=e109]: keyboard
+        - text: Keyboard Shortcuts
+      - generic [ref=e110]: •
+      - generic [ref=e111]: © 2025 Research Timer Pro
+```

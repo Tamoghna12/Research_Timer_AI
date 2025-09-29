@@ -1,0 +1,297 @@
+@import "tailwindcss";
+@import "./styles/print.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+/* Academic Research Timer - Global Styles */
+
+/* Kill debug borders/outlines if any existed */
+* {
+  outline: 0;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-150;
+  transition-property: background-color, color;
+}
+
+html {
+  transition: background-color 0.15s ease;
+}
+
+html.dark body {
+  @apply bg-gray-900 text-gray-100;
+}
+
+html:not(.dark) body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+/* Form elements with clean styling */
+input, textarea, select {
+  @apply bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-600 transition-all duration-200;
+  @apply text-gray-900 dark:text-gray-100;
+  padding: 0.75rem 1rem;
+}
+
+input::placeholder, textarea::placeholder {
+  @apply text-gray-400 dark:text-gray-400;
+}
+
+input:hover, textarea:hover, select:hover {
+  @apply shadow-md;
+}
+
+/* Material Icons */
+.material-icons {
+  font-size: inherit;
+  line-height: 1;
+}
+
+/* Progress Ring */
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.35s;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-serif text-gray-900 dark:text-white;
+}
+
+/* Timer display */
+.timer-display {
+  @apply font-mono font-bold text-blue-600 dark:text-blue-400;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Card styling */
+.academic-card {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm;
+}
+
+.academic-card:hover {
+  @apply shadow-md;
+}
+
+/* Button styling */
+button {
+  @apply transition-all duration-200;
+}
+
+/* Focus styles */
+input:focus, textarea:focus, button:focus {
+  @apply outline-none ring-2 ring-offset-2 ring-blue-500;
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors;
+}
+
+.btn-secondary {
+  @apply text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-semibold py-3 px-6 rounded-lg transition-colors;
+}
+
+/* 🎨 CLEAN DARK MODE - Same Pattern as Light Mode */
+
+/* Just override the core Tailwind dark mode classes properly */
+html.dark {
+  color-scheme: dark;
+}
+
+/* Background colors - let Tailwind handle the rest */
+html.dark .bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+}
+
+html.dark .bg-gray-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+}
+
+html.dark .bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
+/* Text colors */
+html.dark .text-gray-900 {
+  --tw-text-opacity: 1;
+  color: rgb(248 250 252 / var(--tw-text-opacity));
+}
+
+html.dark .text-gray-800 {
+  --tw-text-opacity: 1;
+  color: rgb(241 245 249 / var(--tw-text-opacity));
+}
+
+html.dark .text-gray-700 {
+  --tw-text-opacity: 1;
+  color: rgb(226 232 240 / var(--tw-text-opacity));
+}
+
+html.dark .text-gray-600 {
+  --tw-text-opacity: 1;
+  color: rgb(203 213 225 / var(--tw-text-opacity));
+}
+
+html.dark .text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity));
+}
+
+html.dark .text-gray-400 {
+  --tw-text-opacity: 1;
+  color: rgb(148 163 184 / var(--tw-text-opacity));
+}
+
+/* Border colors */
+html.dark .border-gray-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(55 65 81 / var(--tw-border-opacity));
+}
+
+html.dark .border-gray-300 {
+  --tw-border-opacity: 1;
+  border-color: rgb(75 85 99 / var(--tw-border-opacity));
+}
+
+html.dark .border-gray-700 {
+  --tw-border-opacity: 1;
+  border-color: rgb(55 65 81 / var(--tw-border-opacity));
+}
+
+/* Input and form elements */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: rgb(31 41 55);
+  border-color: rgb(75 85 99);
+  color: rgb(248 250 252);
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: rgb(148 163 184);
+}
+
+/* Buttons - only non-primary ones */
+html.dark button:not(.bg-blue-600):not(.bg-green-600):not(.bg-red-600) {
+  background-color: rgb(55 65 81);
+  border-color: rgb(75 85 99);
+  color: rgb(248 250 252);
+}
+
+html.dark button:not(.bg-blue-600):not(.bg-green-600):not(.bg-red-600):hover {
+  background-color: rgb(75 85 99);
+}
+
+/* Preserve the beautiful existing timer styling */
+html.dark .progress-ring__circle.text-blue-600 {
+  color: rgb(96 165 250);
+}
+
+html.dark .text-blue-600 {
+  --tw-text-opacity: 1;
+  color: rgb(96 165 250 / var(--tw-text-opacity));
+}
+
+html.dark .text-blue-400 {
+  --tw-text-opacity: 1;
+  color: rgb(96 165 250 / var(--tw-text-opacity));
+}
+
+/* 🎯 Modal and Onboarding - Clean approach */
+html.dark .modal,
+html.dark [role="dialog"] {
+  background-color: rgba(17, 24, 39, 0.8);
+}
+
+/* Radio buttons and checkboxes */
+html.dark input[type="radio"],
+html.dark input[type="checkbox"] {
+  accent-color: rgb(96 165 250);
+}
+
+/* Hover states that need dark mode */
+html.dark .hover\:bg-gray-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
+html.dark .hover\:bg-gray-50:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
+/* Focus states with proper color scheme */
+html.dark .focus\:bg-gray-100:focus {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
+/* Selection highlight colors */
+html.dark .bg-blue-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 58 138 / 0.3);
+}
+
+html.dark .text-blue-800 {
+  --tw-text-opacity: 1;
+  color: rgb(96 165 250 / var(--tw-text-opacity));
+}
+
+/* Green status colors */
+html.dark .bg-green-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(21 128 61 / 0.3);
+}
+
+html.dark .text-green-800 {
+  --tw-text-opacity: 1;
+  color: rgb(34 197 94 / var(--tw-text-opacity));
+}
+
+/* Red status colors */
+html.dark .bg-red-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(153 27 27 / 0.3);
+}
+
+html.dark .text-red-800 {
+  --tw-text-opacity: 1;
+  color: rgb(248 113 113 / var(--tw-text-opacity));
+}
+
+/* Yellow/orange status colors */
+html.dark .bg-yellow-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(146 64 14 / 0.3);
+}
+
+html.dark .text-yellow-800 {
+  --tw-text-opacity: 1;
+  color: rgb(251 191 36 / var(--tw-text-opacity));
+}
+
+/* Ensure good contrast for darker grays */
+html.dark .bg-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(75 85 99 / var(--tw-bg-opacity));
+}
+
+html.dark .bg-gray-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
+}

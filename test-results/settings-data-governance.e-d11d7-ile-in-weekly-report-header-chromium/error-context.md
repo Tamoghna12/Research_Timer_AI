@@ -1,0 +1,76 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - heading "Research Timer Pro" [level=1] [ref=e8]
+        - navigation [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "Timeline" [ref=e11] [cursor=pointer]:
+            - /url: /timeline
+          - link "Analytics" [ref=e12] [cursor=pointer]:
+            - /url: /analytics
+          - link "Report" [ref=e13] [cursor=pointer]:
+            - /url: /report
+          - link "Settings" [ref=e14] [cursor=pointer]:
+            - /url: /settings
+      - button "Toggle theme" [ref=e15]:
+        - generic [ref=e16]: dark_mode
+        - text: Dark
+  - main [ref=e17]:
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - heading "Settings" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Customize your Research Timer Pro experience and manage your data
+      - generic [ref=e24]:
+        - heading "Profile" [level=2] [ref=e26]
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]: Researcher Name
+            - textbox "Researcher Name" [ref=e31]
+          - generic [ref=e32]:
+            - generic [ref=e33]: Affiliation
+            - textbox "Affiliation" [ref=e34]
+      - generic [ref=e35]:
+        - heading "Privacy" [level=2] [ref=e37]
+        - generic [ref=e39]: Loading privacy settings...
+      - generic [ref=e40]:
+        - heading "Data" [level=2] [ref=e42]
+        - generic [ref=e44]:
+          - generic [ref=e45]:
+            - heading "Export Data" [level=3] [ref=e46]
+            - paragraph [ref=e47]: Download all your research sessions, settings, and AI summaries as a JSON backup file.
+            - button "download Export All Data" [ref=e48]:
+              - generic [ref=e49]: download
+              - text: Export All Data
+          - generic [ref=e50]:
+            - heading "Import Data" [level=3] [ref=e51]
+            - paragraph [ref=e52]: Restore data from a Research Timer Pro backup file. Existing data will be merged intelligently.
+            - generic [ref=e53]:
+              - generic [ref=e54]: Backup File
+              - button "Backup File" [ref=e55]
+          - generic [ref=e56]:
+            - heading "Danger Zone" [level=3] [ref=e57]
+            - paragraph [ref=e58]: Permanently delete all your sessions, settings, and data. This action cannot be undone. Consider exporting your data first.
+            - button "delete_forever Delete All Data" [ref=e59]:
+              - generic [ref=e60]: delete_forever
+              - text: Delete All Data
+            - generic [ref=e61]: This will permanently delete all your research data and cannot be undone
+      - generic [ref=e62]:
+        - heading "AI Features" [level=2] [ref=e64]
+        - generic [ref=e67]:
+          - generic [ref=e68]:
+            - generic [ref=e69]: Enable AI Summarization (opt-in)
+            - generic [ref=e70]: Generate concise summaries of your research sessions using AI. All settings are stored locally.
+          - checkbox [ref=e73]
+  - contentinfo [ref=e75]:
+    - generic [ref=e78]:
+      - button "keyboard Keyboard Shortcuts" [ref=e79]:
+        - generic [ref=e80]: keyboard
+        - text: Keyboard Shortcuts
+      - generic [ref=e81]: •
+      - generic [ref=e82]: © 2025 Research Timer Pro
+```

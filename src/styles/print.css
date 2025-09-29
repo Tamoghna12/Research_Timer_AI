@@ -1,0 +1,199 @@
+/* Print Stylesheet for Weekly Report */
+@media print {
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 1.6cm 2.0cm;
+  }
+
+  /* Reset colors for print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide elements that shouldn't print */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure text is black for print */
+  body,
+  h1, h2, h3, h4, h5, h6,
+  p, div, span {
+    color: #000 !important;
+  }
+
+  /* Header styling */
+  h1 {
+    font-size: 24px !important;
+    margin-bottom: 8px !important;
+  }
+
+  h2 {
+    font-size: 18px !important;
+    margin-top: 20px !important;
+    margin-bottom: 12px !important;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 16px !important;
+    margin-top: 16px !important;
+    margin-bottom: 8px !important;
+    page-break-after: avoid;
+  }
+
+  /* Card styling for print */
+  .card {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0 !important;
+    margin-bottom: 16px !important;
+    page-break-inside: avoid;
+  }
+
+  /* Ensure KPI grid is readable */
+  .grid {
+    display: block !important;
+  }
+
+  .grid > div {
+    display: inline-block !important;
+    width: 24% !important;
+    margin-right: 1% !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Table styling */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    font-size: 11px !important;
+  }
+
+  th, td {
+    border: 1px solid #e5e7eb !important;
+    padding: 6px 8px !important;
+    text-align: left !important;
+  }
+
+  th {
+    background-color: #f9fafb !important;
+    font-weight: bold !important;
+  }
+
+  /* Prevent table rows from breaking across pages */
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Session Log should start on new page if needed */
+  .session-log-card {
+    page-break-before: auto;
+  }
+
+  /* Next Week Plan should start on new page if it would overflow */
+  .next-week-card {
+    page-break-before: auto;
+  }
+
+  /* Highlights section styling */
+  .highlight-item {
+    margin-bottom: 16px !important;
+    page-break-inside: avoid;
+    border-left: 3px solid #3b82f6 !important;
+    padding-left: 12px !important;
+  }
+
+  /* Badge styling for print */
+  .badge {
+    border: 1px solid #d1d5db !important;
+    background-color: #f9fafb !important;
+    color: #374151 !important;
+    padding: 2px 6px !important;
+    border-radius: 3px !important;
+    font-size: 10px !important;
+  }
+
+  /* Distribution bars - convert to text-based display */
+  .distribution-bar {
+    display: flex !important;
+    justify-content: space-between !important;
+    padding: 4px 0 !important;
+    border-bottom: 1px dotted #d1d5db !important;
+  }
+
+  /* Checkbox styling for Next Week Plan */
+  input[type="checkbox"] {
+    -webkit-appearance: checkbox !important;
+    appearance: checkbox !important;
+    margin-right: 8px !important;
+  }
+
+  /* Ensure proper spacing */
+  .space-y-6 > * + * {
+    margin-top: 20px !important;
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 16px !important;
+  }
+
+  .space-y-2 > * + * {
+    margin-top: 8px !important;
+  }
+
+  /* Bullet points */
+  .bullet-list {
+    list-style: disc inside !important;
+    margin-left: 12px !important;
+  }
+
+  /* Footer for generated attribution */
+  .report-footer {
+    page-break-before: avoid;
+    margin-top: 20px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid #e5e7eb !important;
+    font-size: 10px !important;
+    color: #6b7280 !important;
+    text-align: center !important;
+  }
+
+  /* Avoid breaking inside important content blocks */
+  .summary-kpis,
+  .time-distribution,
+  .highlight-item {
+    page-break-inside: avoid;
+  }
+
+  /* Long tables can break, but try to keep header with content */
+  thead {
+    display: table-header-group;
+  }
+
+  tbody {
+    display: table-row-group;
+  }
+
+  /* Ensure links are visible in print */
+  a::after {
+    content: " (" attr(href) ")";
+    font-size: 10px;
+    color: #6b7280;
+  }
+
+  /* But hide the href for display titles */
+  .link-title a::after {
+    content: none;
+  }
+
+  /* Truncate very long text in tables */
+  .truncate {
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    max-width: 150px !important;
+  }
+}

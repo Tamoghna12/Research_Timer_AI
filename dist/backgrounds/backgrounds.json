@@ -1,0 +1,34 @@
+{
+  "backgrounds": [
+    {
+      "id": "forest",
+      "name": "Forest Canopy",
+      "type": "gradient",
+      "gradient": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+    },
+    {
+      "id": "ocean",
+      "name": "Ocean Depth",
+      "type": "gradient",
+      "gradient": "linear-gradient(135deg, #667db6 0%, #0082c8 100%)"
+    },
+    {
+      "id": "sunset",
+      "name": "Sunset Sky",
+      "type": "gradient",
+      "gradient": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)"
+    },
+    {
+      "id": "mountain",
+      "name": "Mountain Vista",
+      "type": "gradient",
+      "gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+    },
+    {
+      "id": "space",
+      "name": "Deep Space",
+      "type": "gradient",
+      "gradient": "linear-gradient(135deg, #434343 0%, #000000 100%)"
+    }
+  ]
+}

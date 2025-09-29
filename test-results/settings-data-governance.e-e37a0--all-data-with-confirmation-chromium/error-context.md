@@ -1,0 +1,108 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - heading "Research Timer Pro" [level=1] [ref=e8]
+        - navigation [ref=e9]:
+          - link "Home" [ref=e10] [cursor=pointer]:
+            - /url: /
+          - link "Timeline" [ref=e11] [cursor=pointer]:
+            - /url: /timeline
+          - link "Analytics" [ref=e12] [cursor=pointer]:
+            - /url: /analytics
+          - link "Report" [ref=e13] [cursor=pointer]:
+            - /url: /report
+          - link "Settings" [ref=e14] [cursor=pointer]:
+            - /url: /settings
+      - button "Toggle theme" [ref=e15]:
+        - generic [ref=e16]: dark_mode
+        - text: Dark
+  - main [ref=e17]:
+    - generic [ref=e20]:
+      - generic [ref=e21]:
+        - heading "Research Timer Pro" [level=1] [ref=e22]
+        - paragraph [ref=e23]: Focus on what matters most
+      - generic [ref=e24]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: 25:00
+          - generic [ref=e28]: Ready
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - heading "Focus Mode (1-5 keys)" [level=3] [ref=e31]:
+              - text: Focus Mode
+              - generic [ref=e32]: (1-5 keys)
+            - generic [ref=e33]:
+              - button "Lit Review 25m Literature review and reading" [active] [ref=e34]:
+                - generic [ref=e35]: Lit Review
+                - generic [ref=e36]: 25m
+                - generic [ref=e37]: Literature review and reading
+              - button "Analysis 45m Data analysis and research" [ref=e38]:
+                - generic [ref=e39]: Analysis
+                - generic [ref=e40]: 45m
+                - generic [ref=e41]: Data analysis and research
+              - button "Writing 30m Writing and documentation" [ref=e42]:
+                - generic [ref=e43]: Writing
+                - generic [ref=e44]: 30m
+                - generic [ref=e45]: Writing and documentation
+              - button "Deep Work 90m Deep focus sessions" [ref=e46]:
+                - generic [ref=e47]: Deep Work
+                - generic [ref=e48]: 90m
+                - generic [ref=e49]: Deep focus sessions
+              - button "Break 15m Rest and recovery" [ref=e50]:
+                - generic [ref=e51]: Break
+                - generic [ref=e52]: 15m
+                - generic [ref=e53]: Rest and recovery
+          - generic [ref=e54]:
+            - generic [ref=e55]: Custom Duration (minutes)
+            - spinbutton "Custom Duration (minutes)" [ref=e56]
+            - paragraph [ref=e57]: Leave empty to use preset duration
+          - generic [ref=e58]:
+            - button "play_arrow Start" [ref=e59]:
+              - generic [ref=e60]: play_arrow
+              - text: Start
+            - button "refresh Reset" [ref=e61]:
+              - generic [ref=e62]: refresh
+              - text: Reset
+          - generic [ref=e63]:
+            - paragraph [ref=e64]:
+              - text: Press
+              - generic [ref=e65]: Space
+              - text: to start/pause
+            - paragraph [ref=e66]:
+              - text: Press
+              - generic [ref=e67]: R
+              - text: to reset
+      - generic [ref=e68]:
+        - generic [ref=e69]:
+          - heading "Session Details" [level=2] [ref=e70]
+          - paragraph [ref=e71]: These details will be saved when you start a session
+        - generic [ref=e72]:
+          - generic [ref=e73]:
+            - generic [ref=e74]: Goal
+            - textbox "Goal" [ref=e75]
+            - generic [ref=e76]: Describe the main objective of this focus session
+          - generic [ref=e77]:
+            - generic [ref=e78]: Notes
+            - textbox "Notes" [ref=e79]
+            - generic [ref=e80]: Add any relevant notes or observations for this session. Auto-saves as you type.
+          - generic [ref=e81]:
+            - generic [ref=e82]: Tags
+            - combobox "Tags" [ref=e84]
+            - generic [ref=e85]: Add tags to categorize this session. Use keyboard navigation to manage tags.
+            - paragraph [ref=e86]: Press Enter or comma to add. Backspace to remove.
+          - generic [ref=e87]:
+            - generic [ref=e88]: Reference Link
+            - textbox "Reference Link" [ref=e89]
+            - generic [ref=e90]: Add a reference link such as a URL or DOI for papers or resources
+            - paragraph [ref=e91]: DOI, URL, or other reference
+  - contentinfo [ref=e92]:
+    - generic [ref=e95]:
+      - button "keyboard Keyboard Shortcuts" [ref=e96]:
+        - generic [ref=e97]: keyboard
+        - text: Keyboard Shortcuts
+      - generic [ref=e98]: •
+      - generic [ref=e99]: © 2025 Research Timer Pro
+```
