@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import JournalModal from '../components/JournalModal'
 import FocusMusic from '../components/music/FocusMusic'
 import OnboardingModal from '../components/onboarding/OnboardingModal'
@@ -113,18 +113,18 @@ const Home: React.FC = () => {
   // Get current session metadata or defaults
   const currentGoal = sessionState.currentSession?.goal || ''
   const currentNotes = sessionState.currentSession?.notes || ''
-  const currentTags = sessionState.currentSession?.tags || []
+  const currentTags = useMemo(() => sessionState.currentSession?.tags || [], [sessionState.currentSession?.tags])
   const currentLink = sessionState.currentSession?.link || ''
 
   // Timer display logic using Pomodoro timer
   const displayMs = pomodoroState.timeRemaining;
   const timerText = formatTime(displayMs)
-  const getStatus = () => {
+  const getStatus = useCallback(() => {
     if (statusMessage) return statusMessage
     if (pomodoroState.isRunning) return `${pomodoroState.currentMode === 'work' ? 'Work' : 'Break'} - Running`
     if (pomodoroState.isPaused) return `${pomodoroState.currentMode === 'work' ? 'Work' : 'Break'} - Paused`
     return `${pomodoroState.currentMode === 'work' ? 'Work' : 'Break'} - Ready`
-  }
+  }, [statusMessage, pomodoroState.isRunning, pomodoroState.isPaused, pomodoroState.currentMode])
 
   // Update Pomodoro settings when user changes duration
   useEffect(() => {
@@ -134,7 +134,7 @@ const Home: React.FC = () => {
     pomodoroControls.updateSettings({
       workDuration: newDuration
     });
-  }, [customDuration, selectedPreset.duration]); // Removed pomodoroControls to prevent infinite loop
+  }, [customDuration, selectedPreset.duration, pomodoroControls]);
 
   // Metadata handlers
   const handleGoalChange = (goal: string) => {
@@ -190,7 +190,7 @@ const Home: React.FC = () => {
   }
 
   // Pomodoro timer controls
-  const handleStartPause = () => {
+  const handleStartPause = useCallback(() => {
     if (pomodoroState.isRunning) {
       pomodoroControls.pause()
     } else if (pomodoroState.isPaused) {
@@ -208,15 +208,15 @@ const Home: React.FC = () => {
       sessionControls.startSession(preset, duration * 60 * 1000);
       pomodoroControls.start()
     }
-  }
+  }, [pomodoroState.isRunning, pomodoroState.isPaused, customDuration, selectedPreset, pomodoroControls, sessionControls]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     pomodoroControls.reset()
     if (sessionState.currentSession) {
       sessionControls.stopSession(true) // Cancel current session
     }
     setStatusMessage('')
-  }
+  }, [pomodoroControls, sessionState.currentSession, sessionControls]);
 
 
   // Legacy session controls (kept for compatibility)
@@ -661,7 +661,7 @@ const Home: React.FC = () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', handleWindowFocus);
     };
-  }, [pomodoroState.isRunning, floatingWindow]);
+  }, [pomodoroState.isRunning, floatingWindow, openFloatingWindow]);
 
   // Update floating window content
   useEffect(() => {

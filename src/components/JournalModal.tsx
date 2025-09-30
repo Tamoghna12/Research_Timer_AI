@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Button from './ui/Button';
 import Field from './ui/Field';
@@ -50,6 +50,91 @@ export const JournalModal: React.FC<JournalModalProps> = ({
   const draftTimeoutRef = useRef<number | undefined>(undefined);
 
   const preset = TIMER_PRESETS.find(p => p.id === mode);
+
+  const getEmptyJournal = (mode: SessionMode): FormData => {
+    switch (mode) {
+      case 'lit':
+        return { kind: 'lit', keyClaim: '', method: '', limitation: '' };
+      case 'writing':
+        return { kind: 'writing', wordsAdded: null, sectionsTouched: '' };
+      case 'analysis':
+        return { kind: 'analysis', scriptOrNotebook: '', datasetRef: '', nextStep: '' };
+      case 'deep':
+      case 'break':
+        return { kind: mode, whatMoved: '' };
+      default:
+        return {};
+    }
+  };
+
+  const validateForm = useCallback((): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (mode === 'writing' && 'wordsAdded' in formData && formData.wordsAdded !== null && formData.wordsAdded !== undefined) {
+      const words = Number(formData.wordsAdded);
+      if (isNaN(words) || words < 0) {
+        newErrors.wordsAdded = 'Words added must be a number ≥ 0 or left blank';
+      }
+    }
+
+    if (mode === 'analysis') {
+      const hasScript = 'scriptOrNotebook' in formData ? formData.scriptOrNotebook?.trim() : '';
+      const hasDataset = 'datasetRef' in formData ? formData.datasetRef?.trim() : '';
+      const hasNextStep = 'nextStep' in formData ? formData.nextStep?.trim() : '';
+
+      if ((hasScript || hasDataset) && !hasNextStep) {
+        newErrors.nextStep = 'Next step is required when script/notebook or dataset is provided';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [mode, formData]);
+
+  const trimFormData = useCallback((data: FormData): SessionJournal => {
+    const trimmed = { ...data };
+
+    Object.keys(trimmed).forEach(key => {
+      const typedTrimmed = trimmed as Record<string, unknown>;
+      if (typeof typedTrimmed[key] === 'string') {
+        typedTrimmed[key] = (typedTrimmed[key] as string).trim();
+      }
+    });
+
+    // Ensure proper typing
+    const typedTrimmed = trimmed as Record<string, unknown>;
+    typedTrimmed.kind = mode;
+    return trimmed as SessionJournal;
+  }, [mode]);
+
+  const handleSave = useCallback(() => {
+    if (!validateForm()) return;
+
+    const journal = trimFormData(formData);
+    const finalAiSummary = useAiSummary && aiSummary.trim() ? aiSummary.trim() : undefined;
+    const aiMeta = finalAiSummary ? {
+      provider: 'ollama' as const,
+      model: 'llama3:8b',
+      createdAt: Date.now()
+    } : undefined;
+
+    onSave(journal, finalAiSummary, aiMeta);
+  }, [validateForm, trimFormData, formData, useAiSummary, aiSummary, onSave]);
+
+  const handleSkip = useCallback(() => {
+    ai.cancel();
+    onSkip();
+  }, [ai, onSkip]);
+
+  const handleCancel = useCallback(() => {
+    if (isDirty || ai.status === 'loading') {
+      if (!window.confirm('You have unsaved changes. Are you sure you want to cancel?')) {
+        return;
+      }
+    }
+    ai.cancel();
+    onCancel();
+  }, [isDirty, ai, onCancel]);
 
   // Initialize form data from existing journal or draft
   useEffect(() => {
@@ -113,7 +198,7 @@ export const JournalModal: React.FC<JournalModalProps> = ({
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keydown', trapFocus);
     };
-  }, [open, mode]); // handleCancel and handleSave are stable callbacks
+  }, [open, mode, handleCancel, handleSave]);
 
   // Auto-save draft after 5 seconds of inactivity
   useEffect(() => {
@@ -134,22 +219,6 @@ export const JournalModal: React.FC<JournalModalProps> = ({
     };
   }, [formData, isDirty, open, saveDraft]);
 
-  const getEmptyJournal = (mode: SessionMode): FormData => {
-    switch (mode) {
-      case 'lit':
-        return { kind: 'lit', keyClaim: '', method: '', limitation: '' };
-      case 'writing':
-        return { kind: 'writing', wordsAdded: null, sectionsTouched: '' };
-      case 'analysis':
-        return { kind: 'analysis', scriptOrNotebook: '', datasetRef: '', nextStep: '' };
-      case 'deep':
-      case 'break':
-        return { kind: mode, whatMoved: '' };
-      default:
-        return {};
-    }
-  };
-
   const updateFormData = (field: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     setIsDirty(true);
@@ -157,75 +226,6 @@ export const JournalModal: React.FC<JournalModalProps> = ({
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (mode === 'writing' && 'wordsAdded' in formData && formData.wordsAdded !== null && formData.wordsAdded !== undefined) {
-      const words = Number(formData.wordsAdded);
-      if (isNaN(words) || words < 0) {
-        newErrors.wordsAdded = 'Words added must be a number ≥ 0 or left blank';
-      }
-    }
-
-    if (mode === 'analysis') {
-      const hasScript = 'scriptOrNotebook' in formData ? formData.scriptOrNotebook?.trim() : '';
-      const hasDataset = 'datasetRef' in formData ? formData.datasetRef?.trim() : '';
-      const hasNextStep = 'nextStep' in formData ? formData.nextStep?.trim() : '';
-
-      if ((hasScript || hasDataset) && !hasNextStep) {
-        newErrors.nextStep = 'Next step is required when script/notebook or dataset is provided';
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const trimFormData = (data: FormData): SessionJournal => {
-    const trimmed = { ...data };
-
-    Object.keys(trimmed).forEach(key => {
-      const typedTrimmed = trimmed as Record<string, unknown>;
-      if (typeof typedTrimmed[key] === 'string') {
-        typedTrimmed[key] = (typedTrimmed[key] as string).trim();
-      }
-    });
-
-    // Ensure proper typing
-    const typedTrimmed = trimmed as Record<string, unknown>;
-    typedTrimmed.kind = mode;
-    return trimmed as SessionJournal;
-  };
-
-  const handleSave = () => {
-    if (!validateForm()) return;
-
-    const journal = trimFormData(formData);
-    const finalAiSummary = useAiSummary && aiSummary.trim() ? aiSummary.trim() : undefined;
-    const aiMeta = finalAiSummary ? {
-      provider: 'ollama' as const,
-      model: 'llama3:8b',
-      createdAt: Date.now()
-    } : undefined;
-
-    onSave(journal, finalAiSummary, aiMeta);
-  };
-
-  const handleSkip = () => {
-    ai.cancel();
-    onSkip();
-  };
-
-  const handleCancel = () => {
-    if (isDirty || ai.status === 'loading') {
-      if (!window.confirm('You have unsaved changes. Are you sure you want to cancel?')) {
-        return;
-      }
-    }
-    ai.cancel();
-    onCancel();
   };
 
   const handleGenerateAiSummary = async () => {

@@ -8,5 +8,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     exclude: ['**/node_modules/**', '**/tests/e2e/**'],
+    testTimeout: 10000, // Increase timeout for async tests
   },
 })

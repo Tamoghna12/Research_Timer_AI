@@ -34,7 +34,7 @@ describe('GroqAdapter', () => {
         })
       };
 
-      (global.fetch as any).mockResolvedValue(mockResponse);
+      (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
 
       const result = await adapter.testConnection({
         apiKey: 'test-key',
@@ -60,7 +60,7 @@ describe('GroqAdapter', () => {
         status: 401
       };
 
-      (global.fetch as any).mockResolvedValue(mockResponse);
+      (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
 
       const result = await adapter.testConnection({
         apiKey: 'invalid-key',
@@ -82,7 +82,7 @@ describe('GroqAdapter', () => {
         })
       };
 
-      (global.fetch as any).mockResolvedValue(mockResponse);
+      (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
 
       const result = await adapter.testConnection({
         apiKey: 'test-key',
@@ -121,7 +121,7 @@ describe('GroqAdapter', () => {
         })
       };
 
-      (global.fetch as any).mockResolvedValue(mockResponse);
+      (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
 
       const result = await adapter.summarize('Summarize this research session', {
         apiKey: 'test-key',
@@ -168,7 +168,7 @@ describe('GroqAdapter', () => {
         statusText: 'Too Many Requests'
       };
 
-      (global.fetch as any).mockResolvedValue(mockResponse);
+      (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
 
       await expect(adapter.summarize('test prompt', {
         apiKey: 'test-key',
@@ -185,7 +185,7 @@ describe('GroqAdapter', () => {
         })
       };
 
-      (global.fetch as any).mockResolvedValue(mockResponse);
+      (global.fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
 
       await expect(adapter.summarize('test prompt', {
         apiKey: 'test-key',

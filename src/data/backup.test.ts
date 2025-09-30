@@ -56,7 +56,7 @@ describe('backup', () => {
       const sessions = [mockSession]
       mockDb.sessions.orderBy.mockReturnValue({
         toArray: vi.fn().mockResolvedValue(sessions)
-      } as any)
+      } as { toArray: () => Promise<Session[]> })
       mockDb.settings.get.mockResolvedValue(mockSettings)
 
       const backup = await exportAll()
@@ -71,7 +71,7 @@ describe('backup', () => {
     it('should throw error if settings not found', async () => {
       mockDb.sessions.orderBy.mockReturnValue({
         toArray: vi.fn().mockResolvedValue([])
-      } as any)
+      } as { toArray: () => Promise<Session[]> })
       mockDb.settings.get.mockResolvedValue(undefined)
 
       await expect(exportAll()).rejects.toThrow('App settings not found')
@@ -114,12 +114,12 @@ describe('backup', () => {
     it('should validate backup file format', async () => {
       await expect(importPreview({
         ...mockBackup,
-        kind: 'invalid' as any
+        kind: 'invalid' as 'research-timer-backup'
       })).rejects.toThrow('Invalid backup file: not a research timer backup')
 
       await expect(importPreview({
         ...mockBackup,
-        version: 2 as any
+        version: 2 as 1
       })).rejects.toThrow('Unsupported backup version: 2')
     })
   })

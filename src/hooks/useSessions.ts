@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { db } from '../data/database';
 import type { Session, SessionMode } from '../data/types';
 
@@ -17,7 +17,7 @@ export function useSessions(filters: SessionFilters = {}) {
   const [error, setError] = useState<string | null>(null);
 
   // Fetch sessions from database
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -40,12 +40,12 @@ export function useSessions(filters: SessionFilters = {}) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters.dateRange]);
 
   // Refetch when filters change
   useEffect(() => {
     fetchSessions();
-  }, [filters.dateRange?.from, filters.dateRange?.to]);
+  }, [filters.dateRange?.from, filters.dateRange?.to, fetchSessions]);
 
   // Client-side filtering for mode and tag
   const filteredSessions = useMemo(() => {
