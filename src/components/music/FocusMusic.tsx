@@ -40,15 +40,26 @@ const FocusMusic: React.FC = () => {
   const savePreferences = async (updates: Partial<MusicPreferences>) => {
     try {
       const current = await db.musicPreferences.get('music');
-      if (current) {
-        const updated = {
-          ...current,
-          ...updates,
-          updatedAt: Date.now()
-        };
-        await db.musicPreferences.put(updated);
-        setPreferences(updated);
-      }
+      const now = Date.now();
+
+      // Create default preferences if none exist
+      const defaultPrefs: MusicPreferences = {
+        id: 'music',
+        enabled: false,
+        source: null,
+        volume: 50,
+        createdAt: now,
+        updatedAt: now
+      };
+
+      const updated = {
+        ...(current || defaultPrefs),
+        ...updates,
+        updatedAt: now
+      };
+
+      await db.musicPreferences.put(updated);
+      setPreferences(updated);
     } catch (error) {
       console.error('Failed to save music preferences:', error);
     }
@@ -122,7 +133,33 @@ const FocusMusic: React.FC = () => {
   const spotifyId = spotifyUrl ? extractSpotifyId(spotifyUrl) : null;
 
   if (!preferences?.enabled) {
-    return null;
+    return (
+      <Card data-music-disabled="true" className="border-dashed border-gray-300 dark:border-gray-600">
+        <CardContent className="py-8 text-center">
+          <div className="space-y-4">
+            <div className="text-gray-400 dark:text-gray-500">
+              <span className="material-icons text-4xl">music_note</span>
+            </div>
+            <div>
+              <h3 className="font-medium text-gray-600 dark:text-gray-400 mb-2">
+                Focus Music Available
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                Add YouTube videos, Spotify tracks, or local audio files to enhance your focus sessions.
+              </p>
+              <Button
+                onClick={() => savePreferences({ enabled: true })}
+                variant="secondary"
+                size="sm"
+                leftIcon="settings"
+              >
+                Enable Music
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -306,6 +343,15 @@ const FocusMusic: React.FC = () => {
                   <span className="text-sm text-gray-500 w-8">{volume}%</span>
                 </div>
               </div>
+              <Button
+                onClick={() => savePreferences({ enabled: false })}
+                variant="ghost"
+                size="sm"
+                leftIcon="close"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+              >
+                Disable
+              </Button>
             </div>
           </div>
         </div>
