@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import Card, { CardContent, CardHeader } from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Field from '../components/ui/Field'
@@ -61,22 +61,12 @@ const Timeline: React.FC = () => {
   const selectedSession = sessions.find(s => s.id === selectedSessionId)
   const journalHook = useJournal(selectedSessionId || '')
 
-  const handleExportMarkdown = () => {
-    const markdown = generateMarkdownExport(sessions)
-    downloadFile(markdown, `sessions-${new Date().toISOString().split('T')[0]}.md`, 'text/markdown')
-  }
-
-  const handleExportCSV = () => {
-    const csv = generateCSVExport(sessions)
-    downloadFile(csv, `sessions-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv')
-  }
-
-  const handleAddJournal = (sessionId: string) => {
+  const handleAddJournal = useCallback((sessionId: string) => {
     setSelectedSessionId(sessionId)
     setJournalModalOpen(true)
-  }
+  }, [])
 
-  const handleJournalSave = async (journal: SessionJournal, aiSummary?: string, aiSummaryMeta?: AiSummaryMeta) => {
+  const handleJournalSave = useCallback(async (journal: SessionJournal, aiSummary?: string, aiSummaryMeta?: AiSummaryMeta) => {
     if (!selectedSessionId) return
 
     try {
@@ -86,19 +76,19 @@ const Timeline: React.FC = () => {
     } catch (error) {
       console.error('Failed to save journal:', error)
     }
-  }
+  }, [selectedSessionId, journalHook])
 
-  const handleJournalSkip = () => {
+  const handleJournalSkip = useCallback(() => {
     setJournalModalOpen(false)
     setSelectedSessionId(null)
-  }
+  }, [])
 
-  const handleJournalCancel = () => {
+  const handleJournalCancel = useCallback(() => {
     setJournalModalOpen(false)
     setSelectedSessionId(null)
-  }
+  }, [])
 
-  const generateMarkdownExport = (sessions: Session[]) => {
+  const generateMarkdownExport = useCallback((sessions: Session[]) => {
     const header = `# Research Sessions Export\n\nExported: ${new Date().toLocaleString()}\nTotal Sessions: ${sessions.length}\n\n`
 
     const sessionMarkdown = sessions.map(session => {
@@ -154,9 +144,9 @@ ${session.notes || 'No notes'}
     }).join('')
 
     return header + sessionMarkdown
-  }
+  }, [])
 
-  const generateCSVExport = (sessions: Session[]) => {
+  const generateCSVExport = useCallback((sessions: Session[]) => {
     const headers = ['Date', 'Time', 'Mode', 'Duration (min)', 'Status', 'Goal', 'Notes', 'Tags', 'Links', 'Journal']
     const rows = sessions.map(session => {
       const preset = TIMER_PRESETS.find(p => p.id === session.mode)
@@ -198,9 +188,9 @@ ${session.notes || 'No notes'}
     })
 
     return [headers.join(','), ...rows.map(row => row.join(','))].join('\n')
-  }
+  }, [])
 
-  const downloadFile = (content: string, filename: string, mimeType: string) => {
+  const downloadFile = useCallback((content: string, filename: string, mimeType: string) => {
     const blob = new Blob([content], { type: mimeType })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -210,7 +200,17 @@ ${session.notes || 'No notes'}
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-  }
+  }, [])
+
+  const handleExportMarkdown = useCallback(() => {
+    const markdown = generateMarkdownExport(sessions)
+    downloadFile(markdown, `sessions-${new Date().toISOString().split('T')[0]}.md`, 'text/markdown')
+  }, [sessions, generateMarkdownExport, downloadFile])
+
+  const handleExportCSV = useCallback(() => {
+    const csv = generateCSVExport(sessions)
+    downloadFile(csv, `sessions-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv')
+  }, [sessions, generateCSVExport, downloadFile])
 
   return (
     <div className="transition-all duration-300">

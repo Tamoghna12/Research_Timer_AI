@@ -27,14 +27,13 @@ export interface AiAdapter {
 }
 
 /**
- * Common retry logic for API calls
+ * Common retry logic for API calls with exponential backoff and jitter
  */
 export async function retryWithBackoff<T>(
   fn: () => Promise<T>,
   maxRetries: number = 3,
   signal?: AbortSignal
 ): Promise<T> {
-  const delays = [0, 500, 1500]; // 0ms, 500ms, 1.5s backoff
   let lastError: Error;
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
@@ -45,8 +44,13 @@ export async function retryWithBackoff<T>(
       }
 
       if (attempt > 0) {
-        // Wait for backoff delay
-        await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]));
+        // Exponential backoff with jitter: base delay * 2^(attempt-1) + random jitter
+        const baseDelay = 500; // 500ms base delay
+        const exponentialDelay = baseDelay * Math.pow(2, attempt - 1);
+        const jitter = Math.random() * 200; // 0-200ms random jitter
+        const delay = Math.min(exponentialDelay + jitter, 10000); // Cap at 10 seconds
+
+        await new Promise(resolve => setTimeout(resolve, delay));
 
         // Check again after delay
         if (signal?.aborted) {
@@ -63,11 +67,17 @@ export async function retryWithBackoff<T>(
         throw lastError;
       }
 
-      // Check if it's a retryable error
-      const isRetryable = lastError.message.includes('429') ||
-                         lastError.message.includes('5') ||
-                         lastError.message.includes('timeout') ||
-                         lastError.message.includes('network');
+      // Check if it's a retryable error - more comprehensive error detection
+      const errorStr = lastError.message.toLowerCase();
+      const isRetryable = errorStr.includes('429') ||      // Rate limit
+                         errorStr.includes('502') ||       // Bad gateway
+                         errorStr.includes('503') ||       // Service unavailable
+                         errorStr.includes('504') ||       // Gateway timeout
+                         errorStr.includes('500') ||       // Internal server error
+                         errorStr.includes('timeout') ||   // Request timeout
+                         errorStr.includes('network') ||   // Network error
+                         errorStr.includes('connection') || // Connection error
+                         errorStr.includes('fetch');       // Fetch error
 
       // If not retryable or last attempt, throw
       if (!isRetryable || attempt === maxRetries - 1) {

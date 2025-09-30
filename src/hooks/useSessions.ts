@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { db } from '../data/database';
 import type { Session, SessionMode } from '../data/types';
+import { retryDbOperation, cleanDbError } from '../utils/dbRetry';
 
 export interface SessionFilters {
   mode?: SessionMode | 'all';
@@ -16,27 +17,30 @@ export function useSessions(filters: SessionFilters = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch sessions from database
+  // Fetch sessions from database with retry logic
   const fetchSessions = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      let query = db.sessions.orderBy('startedAt').reverse();
+      const allSessions = await retryDbOperation(async () => {
+        let query = db.sessions.orderBy('startedAt').reverse();
 
-      // Apply date range filter
-      if (filters.dateRange) {
-        query = query.filter(session =>
-          session.startedAt >= filters.dateRange!.from.getTime() &&
-          session.startedAt <= filters.dateRange!.to.getTime()
-        );
-      }
+        // Apply date range filter
+        if (filters.dateRange) {
+          query = query.filter(session =>
+            session.startedAt >= filters.dateRange!.from.getTime() &&
+            session.startedAt <= filters.dateRange!.to.getTime()
+          );
+        }
 
-      const allSessions = await query.toArray();
+        return await query.toArray();
+      });
+
       setSessions(allSessions);
     } catch (err) {
       console.error('Failed to fetch sessions:', err);
-      setError('Failed to load sessions');
+      setError(cleanDbError(err));
     } finally {
       setLoading(false);
     }

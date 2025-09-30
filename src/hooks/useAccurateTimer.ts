@@ -28,7 +28,7 @@ export function useAccurateTimer({
   duration,
   onComplete,
   onTick,
-  interval = 100
+  interval = 1000 // Default to 1 second for better performance
 }: UseAccurateTimerOptions): [TimerState, TimerControls] {
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -50,8 +50,14 @@ export function useAccurateTimer({
     const totalElapsed = now - startTimeRef.current - pausedTimeRef.current;
     const remaining = Math.max(0, currentDuration - totalElapsed);
 
-    setElapsedMs(totalElapsed);
-    setRemainingMs(remaining);
+    // Only update state if there's a meaningful change (> 100ms) to reduce re-renders
+    const elapsedDiff = Math.abs(totalElapsed - elapsedMs);
+    const remainingDiff = Math.abs(remaining - remainingMs);
+
+    if (elapsedDiff >= 100 || remainingDiff >= 100 || remaining === 0) {
+      setElapsedMs(totalElapsed);
+      setRemainingMs(remaining);
+    }
 
     const state: TimerState = {
       remainingMs: remaining,
@@ -73,7 +79,7 @@ export function useAccurateTimer({
         intervalRef.current = null;
       }
     }
-  }, [currentDuration, isRunning, isPaused, isCompleted, onComplete, onTick]);
+  }, [currentDuration, isRunning, isPaused, isCompleted, onComplete, onTick, elapsedMs, remainingMs]);
 
   const start = useCallback(() => {
     if (isCompleted) return;

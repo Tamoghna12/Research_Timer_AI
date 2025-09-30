@@ -57,7 +57,7 @@ export function useSessionRunner({
   const [timerState, timerControls] = useAccurateTimer({
     duration: plannedMs,
     onComplete: () => handleSessionComplete(),
-    interval: 100
+    interval: 1000 // Reduced from 100ms to 1000ms for better performance
   });
 
   // Debounced metadata save function
