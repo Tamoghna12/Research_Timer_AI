@@ -69,8 +69,8 @@ describe('linkUtils', () => {
 
     it('should handle empty or null inputs', () => {
       expect(getLinkTitle('')).toBe('');
-      expect(getLinkTitle(null as any)).toBe('');
-      expect(getLinkTitle(undefined as any)).toBe('');
+      expect(getLinkTitle(null as unknown as string)).toBe('');
+      expect(getLinkTitle(undefined as unknown as string)).toBe('');
     });
 
     it('should remove www prefix from hostnames', () => {
@@ -97,8 +97,8 @@ describe('linkUtils', () => {
 
     it('should handle empty array', () => {
       expect(getLinkedTitles([])).toBe('');
-      expect(getLinkedTitles(null as any)).toBe('');
-      expect(getLinkedTitles(undefined as any)).toBe('');
+      expect(getLinkedTitles(null as unknown as string[])).toBe('');
+      expect(getLinkedTitles(undefined as unknown as string[])).toBe('');
     });
 
     it('should handle single link', () => {

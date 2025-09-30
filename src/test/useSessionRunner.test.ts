@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useSessionRunner } from '../hooks/useSessionRunner';
 import { db } from '../data/database';
-import { TIMER_PRESETS } from '../data/types';
 
 // Mock sound manager
 vi.mock('../utils/sounds', () => ({

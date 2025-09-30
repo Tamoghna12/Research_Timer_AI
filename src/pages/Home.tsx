@@ -275,7 +275,7 @@ const Home: React.FC = () => {
   };
 
   // Floating window functionality
-  const openFloatingWindow = () => {
+  const openFloatingWindow = useCallback(() => {
     if (floatingWindow && !floatingWindow.closed) {
       floatingWindow.focus();
       return;
@@ -613,7 +613,7 @@ const Home: React.FC = () => {
         setFloatingWindow(null);
       });
     }
-  };
+  }, [floatingWindow]);
 
   // Handle messages from floating window
   const handleFloatingMessage = useCallback((event: MessageEvent) => {

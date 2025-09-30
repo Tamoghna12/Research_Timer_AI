@@ -61,6 +61,7 @@ export function useSessionRunner({
   });
 
   // Debounced metadata save function
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const saveMetadataDebounced = useCallback(
     debounce(async (sessionId: string, metadata: Partial<SessionMetadata>) => {
       if (!isMountedRef.current) return;

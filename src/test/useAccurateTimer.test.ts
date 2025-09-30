@@ -89,7 +89,7 @@ describe('useAccurateTimer', () => {
       });
     }
 
-    const elapsedBeforePause = result.current[0].elapsedMs;
+    // const elapsedBeforePause = result.current[0].elapsedMs;
 
     // Pause - get fresh controls reference
     act(() => {

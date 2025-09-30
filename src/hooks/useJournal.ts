@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { db } from '../data/database';
-import type { SessionJournal, SessionMode, AiSummaryMeta } from '../data/types';
+import type { SessionJournal, SessionMode, AiSummaryMeta, Session } from '../data/types';
 
 export interface JournalData {
   mode: SessionMode;
@@ -39,7 +39,7 @@ export function useJournal(sessionId: string) {
   const save = useCallback(async (journal: SessionJournal, aiSummary?: string, aiSummaryMeta?: AiSummaryMeta) => {
     try {
       const now = Date.now();
-      const updateData: any = {
+      const updateData: Partial<Session> = {
         journal,
         journalDraft: undefined, // Clear draft when saving final
         updatedAt: now

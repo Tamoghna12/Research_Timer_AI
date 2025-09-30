@@ -14,7 +14,18 @@ vi.mock('../data/database', () => ({
   }
 }));
 
-const mockDb = database.db as any;
+const mockDb = database.db as unknown as {
+  sessions: {
+    get: ReturnType<typeof vi.fn>;
+    put: ReturnType<typeof vi.fn>;
+  };
+  sessionLinks: {
+    where: ReturnType<typeof vi.fn>;
+    toArray: ReturnType<typeof vi.fn>;
+    add: ReturnType<typeof vi.fn>;
+    delete: ReturnType<typeof vi.fn>;
+  };
+};
 
 // Mock crypto.randomUUID
 Object.defineProperty(global, 'crypto', {

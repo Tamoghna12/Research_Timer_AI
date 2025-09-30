@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { OllamaAdapter } from './ollama'
-import type { AiSettings } from '../../data/types'
 
 // Mock fetch
 global.fetch = vi.fn()

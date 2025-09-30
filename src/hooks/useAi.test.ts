@@ -48,7 +48,7 @@ describe('useAi', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseLiveQuery.mockReturnValue(settings)
-    mockGetAdapter.mockReturnValue(mockAdapter as any)
+    mockGetAdapter.mockReturnValue(mockAdapter as unknown as AiAdapter)
   })
 
   it('should start in idle state', () => {
@@ -115,7 +115,7 @@ describe('useAi', () => {
   })
 
   it('should handle cancellation', async () => {
-    const controller = new AbortController()
+    // const controller = new AbortController()
     mockAdapter.summarize.mockImplementation(async () => {
       return new Promise((_, reject) => {
         setTimeout(() => {

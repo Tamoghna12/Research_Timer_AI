@@ -12,6 +12,10 @@ vi.mock('../../hooks/useAi', () => ({
   useAi: vi.fn()
 }))
 
+vi.mock('../../hooks/useSettings', () => ({
+  useSettings: vi.fn()
+}))
+
 vi.mock('../../data/database', () => ({
   db: {
     settings: {
@@ -24,9 +28,11 @@ vi.mock('../../data/database', () => ({
 
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useAi } from '../../hooks/useAi'
+import { useSettings } from '../../hooks/useSettings'
 
 const mockUseLiveQuery = vi.mocked(useLiveQuery)
 const mockUseAi = vi.mocked(useAi)
+const mockUseSettings = vi.mocked(useSettings)
 
 describe('AiSettings', () => {
   const mockSettings: AiSettingsType = {
@@ -54,6 +60,10 @@ describe('AiSettings', () => {
     vi.clearAllMocks()
     mockUseLiveQuery.mockReturnValue(mockSettings)
     mockUseAi.mockReturnValue(mockUseAiResult)
+    mockUseSettings.mockReturnValue({
+      settings: { ai: mockSettings },
+      saveAi: vi.fn()
+    })
   })
 
   it('should render AI settings with master enable switch', () => {
@@ -65,7 +75,10 @@ describe('AiSettings', () => {
 
   it('should show configuration panel when AI is enabled', () => {
     const enabledSettings = { ...mockSettings, enabled: true }
-    mockUseLiveQuery.mockReturnValue(enabledSettings)
+    mockUseSettings.mockReturnValue({
+      settings: { ai: enabledSettings },
+      saveAi: vi.fn()
+    })
 
     render(<AiSettings />)
 
@@ -83,7 +96,10 @@ describe('AiSettings', () => {
 
   it('should show API key field for remote providers', () => {
     const enabledSettings = { ...mockSettings, enabled: true, provider: 'openai' as const }
-    mockUseLiveQuery.mockReturnValue(enabledSettings)
+    mockUseSettings.mockReturnValue({
+      settings: { ai: enabledSettings },
+      saveAi: vi.fn()
+    })
 
     render(<AiSettings />)
 
@@ -93,7 +109,10 @@ describe('AiSettings', () => {
 
   it('should show base URL field for Ollama provider', () => {
     const enabledSettings = { ...mockSettings, enabled: true, provider: 'ollama' }
-    mockUseLiveQuery.mockReturnValue(enabledSettings)
+    mockUseSettings.mockReturnValue({
+      settings: { ai: enabledSettings },
+      saveAi: vi.fn()
+    })
 
     render(<AiSettings />)
 
