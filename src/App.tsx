@@ -8,6 +8,7 @@ import Timeline from './pages/Timeline'
 const Analytics = React.lazy(() => import('./pages/AnalyticsPage'))
 const WeeklyReport = React.lazy(() => import('./pages/WeeklyReport'))
 const Settings = React.lazy(() => import('./pages/Settings'))
+const HelpCenter = React.lazy(() => import('./components/help/HelpCenter'))
 
 // Loading fallback component
 const LoadingFallback: React.FC = () => (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/report" element={<WeeklyReport />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/help" element={<HelpCenter />} />
           </Routes>
         </Suspense>
       </AppShell>

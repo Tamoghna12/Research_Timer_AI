@@ -45,7 +45,8 @@ const Header: React.FC = () => {
     { path: '/timeline', label: 'Timeline', icon: 'timeline' },
     { path: '/analytics', label: 'Analytics', icon: 'analytics' },
     { path: '/report', label: 'Reports', icon: 'assessment' },
-    { path: '/settings', label: 'Settings', icon: 'settings' }
+    { path: '/settings', label: 'Settings', icon: 'settings' },
+    { path: '/help', label: 'Help', icon: 'help' }
   ]
 
   return (
