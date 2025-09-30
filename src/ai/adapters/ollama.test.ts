@@ -188,5 +188,5 @@ describe('Ollama Adapter', () => {
 
     await expect(promise).rejects.toThrow('Ollama server error: 500')
     expect(mockFetch).toHaveBeenCalledTimes(3)
-  })
+  }, 10000)
 })

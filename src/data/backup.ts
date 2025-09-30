@@ -94,6 +94,7 @@ export async function importPreview(file: BackupFile): Promise<ImportPreview> {
 
 export async function importApply(
   file: BackupFile,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _preview: ImportPreview
 ): Promise<{ added: number; updated: number; skipped: number }> {
   // Validate again for safety

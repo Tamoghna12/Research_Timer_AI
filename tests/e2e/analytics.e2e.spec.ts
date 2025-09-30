@@ -19,10 +19,9 @@ test.describe('Analytics Page', () => {
 
   test('displays analytics with seeded data', async ({ page }) => {
     // Seed test data directly into IndexedDB
-    await page.evaluate(() => {
-      return new Promise(async (resolve) => {
-        // Import Dexie and setup
-        const { db } = await import('../data/database.js');
+    await page.evaluate(async () => {
+      // Import Dexie and setup
+      const { db } = await import('../data/database.js');
 
         const today = new Date();
         const yesterday = new Date(today);
@@ -92,13 +91,10 @@ test.describe('Analytics Page', () => {
         ];
 
         try {
-          await db.sessions.bulkAdd(sessions as any);
-          resolve(undefined);
+          await db.sessions.bulkAdd(sessions);
         } catch (error) {
           console.error('Failed to seed data:', error);
-          resolve(undefined);
         }
-      });
     });
 
     // Navigate to analytics page
@@ -136,9 +132,8 @@ test.describe('Analytics Page', () => {
 
   test('updates metrics when changing date range', async ({ page }) => {
     // Seed data with sessions across different time periods
-    await page.evaluate(() => {
-      return new Promise(async (resolve) => {
-        const { db } = await import('../data/database.js');
+    await page.evaluate(async () => {
+      const { db } = await import('../data/database.js');
 
         const today = new Date();
         const lastWeek = new Date(today);
@@ -178,12 +173,10 @@ test.describe('Analytics Page', () => {
         ];
 
         try {
-          await db.sessions.bulkAdd(sessions as any);
-          resolve(undefined);
-        } catch (error) {
-          resolve(undefined);
+          await db.sessions.bulkAdd(sessions);
+        } catch {
+          // Ignore errors during test data seeding
         }
-      });
     });
 
     await page.goto('/analytics');
@@ -202,9 +195,8 @@ test.describe('Analytics Page', () => {
 
   test('displays distribution charts with correct data', async ({ page }) => {
     // Seed data with multiple modes and tags
-    await page.evaluate(() => {
-      return new Promise(async (resolve) => {
-        const { db } = await import('../data/database.js');
+    await page.evaluate(async () => {
+      const { db } = await import('../data/database.js');
 
         const sessions = [
           {
@@ -238,12 +230,10 @@ test.describe('Analytics Page', () => {
         ];
 
         try {
-          await db.sessions.bulkAdd(sessions as any);
-          resolve(undefined);
-        } catch (error) {
-          resolve(undefined);
+          await db.sessions.bulkAdd(sessions);
+        } catch {
+          // Ignore errors during test data seeding
         }
-      });
     });
 
     await page.goto('/analytics');
@@ -260,9 +250,8 @@ test.describe('Analytics Page', () => {
   });
 
   test('displays heatmap with activity data', async ({ page }) => {
-    await page.evaluate(() => {
-      return new Promise(async (resolve) => {
-        const { db } = await import('../data/database.js');
+    await page.evaluate(async () => {
+      const { db } = await import('../data/database.js');
 
         const today = new Date();
         const session = {
@@ -306,9 +295,8 @@ test.describe('Analytics Page', () => {
 
   test('displays streak information', async ({ page }) => {
     // Seed consecutive days of sessions for streak
-    await page.evaluate(() => {
-      return new Promise(async (resolve) => {
-        const { db } = await import('../data/database.js');
+    await page.evaluate(async () => {
+      const { db } = await import('../data/database.js');
 
         const today = new Date();
         const yesterday = new Date(today);
@@ -346,12 +334,10 @@ test.describe('Analytics Page', () => {
         ];
 
         try {
-          await db.sessions.bulkAdd(sessions as any);
-          resolve(undefined);
-        } catch (error) {
-          resolve(undefined);
+          await db.sessions.bulkAdd(sessions);
+        } catch {
+          // Ignore errors during test data seeding
         }
-      });
     });
 
     await page.goto('/analytics');
