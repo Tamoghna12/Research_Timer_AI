@@ -76,9 +76,8 @@ export class ResearchTimerDB extends Dexie {
       if (settings) {
         settings.ai = {
           enabled: false,                    // Privacy-first: disabled by default
-          provider: 'ollama',               // Default to local Ollama
-          model: 'llama3:8b',               // Default Ollama model
-          baseUrl: 'http://localhost:11434', // Default Ollama URL
+          provider: 'openai',               // Default to OpenAI
+          model: 'gpt-4o-mini',             // Default OpenAI model
           bullets: 5,                       // Default bullet count
           maxChars: 300,                    // Default character limit
           temperature: 0.2,                 // Conservative temperature

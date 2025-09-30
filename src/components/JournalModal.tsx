@@ -113,8 +113,8 @@ export const JournalModal: React.FC<JournalModalProps> = ({
     const journal = trimFormData(formData);
     const finalAiSummary = useAiSummary && aiSummary.trim() ? aiSummary.trim() : undefined;
     const aiMeta = finalAiSummary ? {
-      provider: 'ollama' as const,
-      model: 'llama3:8b',
+      provider: 'openai' as const,
+      model: 'gpt-4o-mini',
       createdAt: Date.now()
     } : undefined;
 

@@ -21,8 +21,9 @@ const mockGetAdapter = vi.mocked(getAdapter)
 describe('useAi', () => {
   const settings: AiSettings = {
     enabled: true,
-    provider: 'ollama',
-    model: 'llama3'
+    provider: 'openai',
+    model: 'gpt-4o-mini',
+    apiKey: 'test-api-key'
   }
 
   const mockSession: Session = {
@@ -40,7 +41,7 @@ describe('useAi', () => {
   }
 
   const mockAdapter = {
-    name: 'ollama' as const,
+    name: 'openai' as const,
     testConnection: vi.fn(),
     summarize: vi.fn()
   }

@@ -56,7 +56,7 @@ export type PrivacySettings = {
   userAnonId: string;         // stable UUID v4, created on first run
 };
 
-export type AiProvider = 'ollama' | 'openai' | 'anthropic' | 'gemini' | 'groq';
+export type AiProvider = 'openai' | 'anthropic' | 'gemini' | 'groq';
 
 export type AiSummaryMeta = {
   provider: AiProvider;
@@ -68,10 +68,9 @@ export type AiSummaryMeta = {
 
 export type AiSettings = {
   enabled: boolean;                  // master opt-in (default false)
-  provider: AiProvider | null;       // default 'ollama'
-  model?: string;                    // e.g., 'llama3:8b', 'gpt-4o-mini', 'claude-3-haiku', 'gemini-1.5-pro'
+  provider: AiProvider | null;       // default 'openai'
+  model?: string;                    // e.g., 'gpt-4o-mini', 'claude-3-haiku', 'gemini-1.5-pro'
   apiKey?: string;                   // stored locally (warning in UI)
-  baseUrl?: string;                  // Ollama or proxy (default http://localhost:11434)
   bullets?: number;                  // default 5 (min 3, max 7)
   maxChars?: number;                 // default 300 (150–600)
   temperature?: number;              // default 0.2

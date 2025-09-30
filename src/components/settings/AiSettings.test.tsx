@@ -37,8 +37,8 @@ const mockUseSettings = vi.mocked(useSettings)
 describe('AiSettings', () => {
   const mockSettings: AiSettingsType = {
     enabled: false,
-    provider: 'ollama',
-    model: 'llama3:8b',
+    provider: 'openai',
+    model: 'gpt-4o-mini',
     bullets: 5,
     maxChars: 300,
     temperature: 0.2,
@@ -107,8 +107,8 @@ describe('AiSettings', () => {
     expect(screen.getByText('Your API key will be stored locally and never shared')).toBeInTheDocument()
   })
 
-  it('should show base URL field for Ollama provider', () => {
-    const enabledSettings = { ...mockSettings, enabled: true, provider: 'ollama' }
+  it('should always show API key field for all providers', () => {
+    const enabledSettings = { ...mockSettings, enabled: true, provider: 'openai' }
     mockUseSettings.mockReturnValue({
       settings: { ai: enabledSettings },
       saveAi: vi.fn()
@@ -116,7 +116,7 @@ describe('AiSettings', () => {
 
     render(<AiSettings />)
 
-    expect(screen.getByLabelText('Base URL')).toBeInTheDocument()
-    expect(screen.getByText('Ollama server URL (default: http://localhost:11434)')).toBeInTheDocument()
+    expect(screen.getByLabelText('API Key')).toBeInTheDocument()
+    expect(screen.getByText('Your API key will be stored locally and never shared')).toBeInTheDocument()
   })
 })

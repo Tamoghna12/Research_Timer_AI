@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { OllamaAdapter } from './ollama'
 import { OpenAiAdapter } from './openai'
 import { AnthropicAdapter } from './anthropic'
 import { GeminiAdapter } from './gemini'
@@ -14,68 +13,6 @@ describe('AI Adapters', () => {
     mockFetch.mockClear()
   })
 
-  describe('OllamaAdapter', () => {
-    const adapter = new OllamaAdapter()
-    const options: GenerateOptions = {
-      model: 'llama3:8b',
-      temperature: 0.2,
-      maxTokens: 200,
-      signal: new AbortController().signal
-    }
-
-    it('should test connection successfully', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ models: [{ name: 'llama3:8b' }] })
-      } as Response)
-
-      const result = await adapter.testConnection(options)
-
-      expect(result.ok).toBe(true)
-      expect(result.message).toContain('Connected to Ollama')
-      expect(mockFetch).toHaveBeenCalledWith(
-        'http://localhost:11434/api/tags',
-        expect.objectContaining({
-          method: 'GET',
-          signal: options.signal
-        })
-      )
-    })
-
-    it('should summarize text successfully', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          response: '• Key insight\n• Another point\n• Final thought',
-          done: true,
-          prompt_eval_count: 100,
-          eval_count: 50
-        })
-      } as Response)
-
-      const result = await adapter.summarize('Test prompt', options)
-
-      expect(result.text).toBe('• Key insight\n• Another point\n• Final thought')
-      expect(result.tokensIn).toBe(100)
-      expect(result.tokensOut).toBe(50)
-      expect(mockFetch).toHaveBeenCalledWith(
-        'http://localhost:11434/api/generate',
-        expect.objectContaining({
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'llama3:8b',
-            prompt: 'Test prompt',
-            stream: false,
-            options: {
-              temperature: 0.2,
-              num_predict: 200
-            }
-          })
-        })
-      )
-    })
-  })
 
   describe('OpenAiAdapter', () => {
     const adapter = new OpenAiAdapter()
@@ -281,9 +218,10 @@ describe('AI Adapters', () => {
   })
 
   describe('Error Handling', () => {
-    const adapter = new OllamaAdapter()
+    const adapter = new OpenAiAdapter()
     const options: GenerateOptions = {
-      model: 'llama3:8b',
+      model: 'gpt-4o-mini',
+      apiKey: 'test-key',
       signal: new AbortController().signal
     }
 
@@ -295,7 +233,10 @@ describe('AI Adapters', () => {
         } as Response)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ response: 'Success after retry', done: true })
+          json: async () => ({
+            choices: [{ message: { content: 'Success after retry' } }],
+            usage: { prompt_tokens: 10, completion_tokens: 5 }
+          })
         } as Response)
 
       const result = await adapter.summarize('Test prompt', options)

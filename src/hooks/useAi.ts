@@ -43,8 +43,8 @@ export function useAi(): UseAiResult {
     if (!settings.provider) return false;
     if (!settings.model) return false;
 
-    // Remote providers need API keys
-    if (settings.provider !== 'ollama' && !settings.apiKey) {
+    // All providers now need API keys
+    if (!settings.apiKey) {
       return false;
     }
 
@@ -74,7 +74,6 @@ export function useAi(): UseAiResult {
       const result = await adapter.testConnection({
         model: settings.model!,
         apiKey: settings.apiKey,
-        baseUrl: settings.baseUrl,
         signal: controller.signal
       });
 
@@ -132,7 +131,6 @@ export function useAi(): UseAiResult {
       const result = await adapter.summarize(prompt, {
         model: settings.model!,
         apiKey: settings.apiKey,
-        baseUrl: settings.baseUrl,
         temperature: settings.temperature || 0.2,
         maxTokens: 200,
         signal: controller.signal

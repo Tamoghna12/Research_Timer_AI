@@ -15,8 +15,8 @@ const AiSettings: React.FC = () => {
   const updateSettings = useCallback(async (updates: Partial<AiSettingsType>) => {
     const currentAi = settings?.ai || {
       enabled: false,
-      provider: 'ollama',
-      model: 'llama3:8b',
+      provider: 'openai',
+      model: 'gpt-4o-mini',
       bullets: 5,
       maxChars: 300,
       temperature: 0.2,
@@ -41,8 +41,8 @@ const AiSettings: React.FC = () => {
 
   const defaultSettings: AiSettingsType = {
     enabled: false,
-    provider: 'ollama',
-    model: 'llama3:8b',
+    provider: 'openai',
+    model: 'gpt-4o-mini',
     bullets: 5,
     maxChars: 300,
     temperature: 0.2,
@@ -52,36 +52,33 @@ const AiSettings: React.FC = () => {
   const currentSettings = settings?.ai || defaultSettings
 
   const providers: { value: AiProvider; label: string; description: string }[] = [
-    { value: 'ollama', label: 'Ollama (Local)', description: 'Run AI models locally on your machine' },
-    { value: 'groq', label: 'Groq', description: 'Ultra-fast inference with Llama, Mixtral, and Gemma models' },
     { value: 'openai', label: 'OpenAI', description: 'GPT models via OpenAI API' },
     { value: 'anthropic', label: 'Anthropic', description: 'Claude models via Anthropic API' },
-    { value: 'gemini', label: 'Google Gemini', description: 'Gemini models via Google AI API' }
+    { value: 'gemini', label: 'Google Gemini', description: 'Gemini models via Google AI API' },
+    { value: 'groq', label: 'Groq', description: 'Ultra-fast inference with Llama, Mixtral, and Gemma models' }
   ]
 
   const getModelPlaceholder = (provider: AiProvider) => {
     switch (provider) {
-      case 'ollama': return 'llama3:8b'
-      case 'groq': return 'llama-3.1-70b-versatile'
       case 'openai': return 'gpt-4o-mini'
       case 'anthropic': return 'claude-3-haiku-20240307'
       case 'gemini': return 'gemini-1.5-pro'
+      case 'groq': return 'llama-3.1-70b-versatile'
       default: return ''
     }
   }
 
   const getModelHint = (provider: AiProvider) => {
     switch (provider) {
-      case 'groq': return 'Available models: llama-3.1-70b-versatile, llama-3.1-8b-instant, llama3-70b-8192, llama3-8b-8192, mixtral-8x7b-32768, gemma-7b-it, gemma2-9b-it'
       case 'openai': return 'Available models: gpt-4o, gpt-4o-mini, gpt-4-turbo, gpt-3.5-turbo'
       case 'anthropic': return 'Available models: claude-3-5-sonnet-20241022, claude-3-opus-20240229, claude-3-haiku-20240307'
       case 'gemini': return 'Available models: gemini-1.5-pro, gemini-1.5-flash, gemini-pro'
-      case 'ollama': return 'Popular models: llama3:8b, llama3:70b, codellama, mistral, phi3'
+      case 'groq': return 'Available models: llama-3.1-70b-versatile, llama-3.1-8b-instant, llama3-70b-8192, llama3-8b-8192, mixtral-8x7b-32768, gemma-7b-it, gemma2-9b-it'
       default: return 'The AI model to use for summarization'
     }
   }
 
-  const needsApiKey = currentSettings.provider !== 'ollama'
+  const needsApiKey = true // All providers now require API keys
 
   return (
     <div className="space-y-4">
@@ -137,7 +134,7 @@ const AiSettings: React.FC = () => {
           <Field
             label="Model"
             htmlFor="model"
-            hint={getModelHint(currentSettings.provider || 'ollama')}
+            hint={getModelHint(currentSettings.provider || 'openai')}
           >
             <input
               id="model"
@@ -145,7 +142,7 @@ const AiSettings: React.FC = () => {
               value={currentSettings.model || ''}
               onChange={(e) => updateSettings({ model: e.target.value })}
               onBlur={() => {}} // Save on blur is handled by the onChange
-              placeholder={getModelPlaceholder(currentSettings.provider || 'ollama')}
+              placeholder={getModelPlaceholder(currentSettings.provider || 'openai')}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </Field>
@@ -169,24 +166,6 @@ const AiSettings: React.FC = () => {
             </Field>
           )}
 
-          {/* Base URL (for Ollama) */}
-          {currentSettings.provider === 'ollama' && (
-            <Field
-              label="Base URL"
-              htmlFor="baseUrl"
-              hint="Ollama server URL (default: http://localhost:11434)"
-            >
-              <input
-                id="baseUrl"
-                type="url"
-                value={currentSettings.baseUrl || ''}
-                onChange={(e) => updateSettings({ baseUrl: e.target.value })}
-                onBlur={() => {}} // Save on blur is handled by the onChange
-                placeholder="http://localhost:11434"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </Field>
-          )}
 
           {/* Advanced Settings */}
           <div className="space-y-4 pt-4 border-t border-gray-300 dark:border-gray-600">
