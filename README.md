@@ -1,4 +1,4 @@
-# Research Timer AI 🎯
+# Pomodoro-for-Researchers/ 🎯
 
 A sophisticated productivity timer designed specifically for researchers, academics, and deep work enthusiasts. Transform your research workflow with intelligent session tracking, AI-powered insights, focus music, and comprehensive analytics—all while keeping your data completely private.
 
